@@ -1,4 +1,4 @@
-# SUMO-GRAL: Urban Pollutants Concentration Estimator
+# SUMO-GRAL[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 SUMO-GRAL is a project aimed at simplifying the process of estimating pollutant concentrations in urban areas by automating the preparation of necessary files for simulation in [GRAL (Graz Lagrangian Model)](https://gral.tugraz.at/). By providing geographic area specifications, [SUMO (Simulation of Urban MObility) emissions files](https://sumo.dlr.de/docs/Simulation/Output/Lane-_or_Edge-based_Emissions_Measures.html), and weather data for the desired area, users can effortlessly generate the required files for conducting GRAL simulations. The weather data format aligns with the format provided by the [monitor stations of Valencian Environmental Agency](https://mediambient.gva.es/es/web/calidad-ambiental/datos-on-line).
 
@@ -57,7 +57,7 @@ python CLI.py --base_directory /path/to/base/directory --north 39.49 --south 39.
 
 - `--base_directory`: The base directory for the project.
 - `--north`, `--south`, `--east`, `--west`: The coordinates of the bounding box.
-- `--epsg`: The EPSG code for the coordinate system to reproject the map to.
+- `--epsg`: The EPSG code for the coordinate system to reproject the map to. (Must be different than EPSG:4326. **This is because GRAL does not support EPSG:4326.**)
 - `--process`: Specify the process to run. Choices are: map, buildings, weather, highway.
 - `--map_name`: The name of the map file to be saved.
 - `--buildings_shp_file`: The name of the shapefile to be saved.
