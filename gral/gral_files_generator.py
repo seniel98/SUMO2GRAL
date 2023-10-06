@@ -1,6 +1,25 @@
 
 
 class GRAL:
+    """
+    A class used to represent the GRAL module.
+
+    Attributes:
+        base_directory (str): The base directory for the project.
+        met_file (str): The name of the met file.
+        buildings_file (str): The name of the buildings file.
+        line_file (str): The name of the line file.
+
+    Methods:
+        create_greb_file(bbox, horizontal_slices): Creates a GREB file with predefined values.
+        create_in_dat_file(particles_ps, dispertion_time, latitude, horizontal_slices): Creates a in.dat file with predefined values.
+        create_meteogpt_file(met_file): Creates a meteogpt.all file with predefined values.
+        create_pollutant_txt_file(pollutant): Creates a pollutant.txt file with predefined values.
+        create_percent_file(): Creates a Percent.txt file with predefined values.
+        create_max_proc_file(n_cores): Creates a Max_Proc.txt file with predefined values.
+        create_other_txt_requiered_files(pollutant, n_cores): Creates the other txt requiered files with predefined values.
+    """
+
 
     def __init__(self, base_directory, met_file, buildings_file, line_file):
         """

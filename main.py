@@ -129,16 +129,21 @@ def main(args):
             location_epsg_new = {"north": north_point_epsg_new_y, "south": south_point_epsg_new_y,
                                  "east": east_point_epsg_new_x, "west": west_point_epsg_new_x}
 
+            
             # Define horizontal layers to simulate in meters
             horizontal_layers = [3,6,9,12,15]
             # Create the GREB file
             gral_module.create_greb_file(bbox=location_epsg_new, horizontal_slices=len(horizontal_layers))
             # Create the in.dat file
-            gral_module.create_in_dat_file(particles_ps=500, dispertion_time=3600, latitude=location["north"], horizontal_slices=horizontal_layers)
+            mean_latitude = (location["north"] + location["south"]) / 2
+            gral_module.create_in_dat_file(particles_ps=500, dispertion_time=3600, latitude=mean_latitude, horizontal_slices=horizontal_layers)
             # Create the meteogpt.all file
             gral_module.create_meteogpt_file(args.met_file)
             # Create the other requiered files
             gral_module.create_other_txt_requiered_files(pollutant="NOx", n_cores=12)
+            # Create the buildings file
+            # TODO
+            # Create the line emission sources file
             # TODO
             # Run the GRAL executable
             # os.system(f'{args.gral_exe}')
