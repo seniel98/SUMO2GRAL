@@ -26,8 +26,8 @@ def run_cli():
                             help="The westernmost longitude of the bounding box. Must be in EPSG:4326, and decimal degrees.", required=True, dest="west")
         parser.add_argument("--epsg", type=int,
                             help="The EPSG code for the coordinate system to reproject the map to, ie: 3857.", default=3857, dest="epsg")
-        parser.add_argument("--process", choices=["map", "buildings", "weather", "highway"],
-                            help="Specify the process to run. Choices are: map, buildings, weather, highway.", required=True,  dest="process")
+        parser.add_argument("--process", choices=["all", "map", "buildings", "weather", "highway", "gral"],
+                            help="Specify the process to run. Choices are: map, buildings, weather, highway, gral", required=True,  dest="process")
         parser.add_argument("--map_name", type=str, default="basemap",
                             help="The name of the map file to be saved.", dest="map_filename")
         parser.add_argument("--buildings_shp_file", type=str, default="buildings",
@@ -44,6 +44,10 @@ def run_cli():
                             help="The day of the weather data to extract, format (dd.mm.yyyy)", dest="weather_day", default=None)
         parser.add_argument("--weather_hour", type=str,
                             help="The hour of the weather data to extract, format (hh:mm)", dest="weather_hour", default=None)
+        parser.add_argument("--met_file", type=str, default="weather.met", help="The name of the met file.",
+                            dest="met_file")
+        parser.add_argument("--gral_exe", type=str, default="GRAL.exe",
+                            help="The name of the GRAL executable.", dest="gral_exe")
 
         args = parser.parse_args()
 
@@ -51,6 +55,7 @@ def run_cli():
 
     except Exception as e:
         print(f"An error occurred: {e}")
+
 
 if __name__ == "__main__":
     run_cli()

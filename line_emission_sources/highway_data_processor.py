@@ -20,8 +20,7 @@ class HighwayDataProcessor:
         insert_lanes_to_highway(highway_gdf: pd.DataFrame, sumo_net) -> pd.DataFrame: Inserts lanes to a highway GeoDataFrame by replacing 0 values with a random value based on the probability distribution of the number of lanes.
         calculate_width_of_highway(highway_gdf: GeoDataFrame) -> GeoDataFrame: Calculates the width of a highway based on the number of lanes.
     """
-class HighwayDataProcessor:
-
+    
     def __init__(self, location):
         """
         Initializes a HighwayDataProcessor object with the given location.
@@ -185,7 +184,7 @@ class HighwayDataProcessor:
         return sumo_emissions_df
 
     @staticmethod
-    def convert_sumo_edges_to_osm_id(edges_emissions_df: pd.DataFrame, sumo_net: sumo.net.Net, osm_id_list: list)-> pd.DataFrame:
+    def convert_sumo_edges_to_osm_id(edges_emissions_df: pd.DataFrame, sumo_net: sumo.net.Net, osm_id_list: list) -> pd.DataFrame:
         """
         Converts the edges of the sumo emission edges file to osm id.
 
