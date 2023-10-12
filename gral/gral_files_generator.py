@@ -1,3 +1,5 @@
+import geopandas as gpd
+import pandas as pd
 
 
 class GRAL:
@@ -13,13 +15,17 @@ class GRAL:
     Methods:
         create_greb_file(bbox, horizontal_slices): Creates a GREB file with predefined values.
         create_in_dat_file(particles_ps, dispertion_time, latitude, horizontal_slices): Creates a in.dat file with predefined values.
-        create_meteogpt_file(met_file): Creates a meteogpt.all file with predefined values.
+        create_meteogpt_file(): Creates a meteogpt.all file with predefined values.
         create_pollutant_txt_file(pollutant): Creates a pollutant.txt file with predefined values.
         create_percent_file(): Creates a Percent.txt file with predefined values.
         create_max_proc_file(n_cores): Creates a Max_Proc.txt file with predefined values.
         create_other_txt_requiered_files(pollutant, n_cores): Creates the other txt requiered files with predefined values.
+        create_buildings_file(): Creates a buildings.dat file with predefined values.
+        create_line_emissions_file(pollutant): Creates a line.dat file with predefined values.
+        create_met_time_series_data_file(meteo_file): Creates a mettimeseries.dat file with predefined values.
+        create_dispersion_number_file(): Creates a DispNr.txt file with predefined values.
+        create_other_optional_files(): Creates the other optional files with predefined values.
     """
-
 
     def __init__(self, base_directory, met_file, buildings_file, line_file):
         """
@@ -139,13 +145,22 @@ class GRAL:
 
         print(f'in.dat file created at: {in_dat_file_path}')
 
-    def create_meteogpt_file(self, met_file) -> None:
+    def create_meteogpt_file(self) -> None:
+        """
+        Creates a meteogpt.all file with predefined values.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         print('Creating meteogpt.all file...')
         meteogpt_file_path = f'{self.base_directory}/meteogpt.all'
 
         meteo_conditions = {"wind_direction": [],
                             "wind_speed": [], "stability_class": []}
-        with open(met_file, 'r') as file:
+        with open(self.met_file, 'r') as file:
             wind_direction = []
             wind_speed = []
             stability_class = []
@@ -177,10 +192,19 @@ class GRAL:
                 wind_direction_sector = rounded_number / 2  # Step 4: Divide by 2
                 file.write(
                     f"{wind_direction_sector},{wind_speed[i]},{stability_class[i]},1000\n")
-                
+
         print(f'meteogpt.all file created at: {meteogpt_file_path}')
 
     def create_pollutant_txt_file(self, pollutant) -> None:
+        """
+        Creates a pollutant.txt file with predefined values.
+        
+        Args:
+            pollutant (str): The name of the pollutant.
+            
+        Returns:
+            None
+        """
         print('Creating pollutant.txt file...')
 
         pollutant_file_path = f'{self.base_directory}/Pollutant.txt'
@@ -202,6 +226,15 @@ class GRAL:
         print(f'Percent.txt file created at: {percent_file_path}')
 
     def create_max_proc_file(self, n_cores) -> None:
+        """
+        Creates a Max_Proc.txt file with predefined values.
+
+        Args:
+            n_cores (int): Number of cores.
+
+        Returns:
+            None
+        """
         print('Creating max_proc file...')
         max_proc_file_path = f'{self.base_directory}/Max_Proc.txt'
         with open(max_proc_file_path, 'w') as file:
@@ -210,9 +243,135 @@ class GRAL:
         print(f'Max_Proc.txt file created at: {max_proc_file_path}')
 
     def create_other_txt_requiered_files(self, pollutant, n_cores) -> None:
+        """
+        Execute the functions to create the other txt requiered files.
+
+        Args:
+            pollutant (str): The name of the pollutant.
+            n_cores (int): Number of cores.
+
+        Returns:
+            None
+        """
         print('Creating other txt requiered files...')
         self.create_pollutant_txt_file(pollutant)
         self.create_percent_file()
         self.create_max_proc_file(n_cores)
 
     #############################
+
+    # OPTIONAL FILES GENERATION #
+
+    def create_buildings_file(self) -> None:
+        """
+        Creates a buildings.dat file with predefined values.
+        
+        Args:
+            None
+        
+        Returns:
+            None
+        """
+        print('Creating buildings file...')
+        buildings_gdf = gpd.read_file(self.buildings_file)
+        buildings_file_path = f'{self.base_directory}/buildings.dat'
+        with open(buildings_file_path, 'w') as file:
+            for index, row in buildings_gdf.iterrows():
+                file.write(
+                    f"{int(row['geometry'].centroid.x)},{int(row['geometry'].centroid.y)},0,{int(row['height'])}\n")
+
+        print(f'buildings.dat file created at: {buildings_file_path}')
+
+    def create_line_emissions_file(self, pollutant) -> None:
+        """
+        Creates a line.dat file with predefined values.
+        
+        Args:
+            pollutant (str): The name of the pollutant.
+        
+        Returns:
+            None
+        """
+        print('Creating line emissions file...')
+        line_gdf = gpd.read_file(self.line_file)
+        line_file_path = f'{self.base_directory}/line.dat'
+        with open(line_file_path, 'w') as file:
+            file.write("Generated: \n")
+            file.write("Generated: \n")
+            file.write("Generated: \n")
+            file.write(
+                f"StrName,Section,Sourcegroup,x1,y1,z1,x2,y2,z2,width,noiseabatementwall,Length[km],--,{pollutant}[kg/(km*h)],--,--,--,--,--,deposition data\n")
+            for index, row in line_gdf.iterrows():
+                minx, miny, maxx, maxy = row['geometry'].bounds
+                file.write(f'{row["osmid"]},1,1,{round(minx,1)},{round(miny,1)},0,{round(maxx,1)},{round(maxy,1)},0,{row["width"]},-3,0,0,{convert_g_to_kg(float(row[f"edge_{pollutant}_n"]))},0,0,0,0,0,0,0,0,0,0,0,0,0\n')
+
+        print(f'line.dat file created at: {line_file_path}')
+
+    def create_met_time_series_data_file(self, meteo_file) -> None:
+        """
+        Creates a mettimeseries.dat file with predefined values.
+        
+        Args:
+            meteo_file (str): The name of the meteo file (.met).
+        
+        Returns:
+            None
+        """
+        print('Creating met time series data file...')
+        met_time_series_data_file_path = f'{self.base_directory}/mettimeseries.dat'
+        meteo_df = pd.read_csv(meteo_file, sep=',', header=None)
+        meteo_df.columns = ['day', 'time', 'wind_speed',
+                            'wind_direction', 'stability_class']
+        with open(met_time_series_data_file_path, 'w') as file:
+            for index, row in meteo_df.iterrows():
+                day_without_year = row['day'].split('.')[0]
+                month_without_year = row['day'].split('.')[1]
+                date = f"{day_without_year}.{month_without_year}"
+                time_without_min = int(row['time'].split(':')[0]) # This is to prevent the 0 in front of the hour
+                # Step 1: Divide by 10
+                divided_number = float(row['wind_direction']) / 10
+                multiplied_number = divided_number * 2  # Step 2: Multiply by 2
+                # Step 3: Round to the nearest integer
+                rounded_number = round(multiplied_number)
+                wind_direction_sector = rounded_number / 2  # Step 4: Divide by 2
+                file.write(
+                    f"{date},{time_without_min},{int(row['wind_speed'])},{round(wind_direction_sector,1)},{int(row['stability_class'])}\n")
+
+        print(
+            f'mettimeseries.dat file created at: {met_time_series_data_file_path}')
+
+    def create_dispersion_number_file(self) -> None:
+        """
+        Creates a DispNr.txt file with predefined values.
+        
+        Args:
+            None
+            
+        Returns:
+            None
+        """
+        print('Creating dispersion number file...')
+        with open(f'{self.base_directory}/DispNr.txt', 'w') as file:
+            file.write("1")
+
+        print(f'DispNr.txt file created at: {self.base_directory}/DispNr.txt')
+
+    def create_other_optional_files(self) -> None:
+        """
+        Execute the functions to create the other optional files.
+        
+        Args:
+            None
+        
+        Returns:
+            None
+        """
+        print('Creating other optional files...')
+        self.create_met_time_series_data_file(self.met_file)
+        self.create_dispersion_number_file()
+
+    #############################
+
+
+def convert_g_to_kg(g) -> float:
+    return g / 1000
