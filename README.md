@@ -25,8 +25,8 @@ S2G is a project aimed at simplifying the process of estimating pollutant concen
 Clone the repository:
 
 ```bash
-git clone https://github.com/seniel98/SUMO-GRAL.git
-cd SUMO-GRAL
+git clone https://github.com/seniel98/SUMO2GRAL.git
+cd SUMO2GRAL
 ```
 
 Install the required dependencies:
