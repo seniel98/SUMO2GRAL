@@ -114,11 +114,15 @@ class MapGenerator:
         Returns:
         - x_out, y_out: Arrays of transformed x and y coordinates.
         """
-
-        transformer = pyproj.Transformer.from_crs("EPSG:{}".format(
-            src_crs), "EPSG:{}".format(dst_crs), always_xy=True)
-        x_out, y_out = transformer.transform(x, y)
-        return x_out, y_out
+        try:
+            transformer = pyproj.Transformer.from_crs("EPSG:{}".format(
+                src_crs), "EPSG:{}".format(dst_crs), always_xy=True)
+            x_out, y_out = transformer.transform(x, y)
+            return x_out, y_out
+        except Exception as e:
+            print(f"{e}")
+            return None, None
+        
 
 
 def image_spoof(self, tile):

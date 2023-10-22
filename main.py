@@ -6,6 +6,7 @@ from gral.gral_files_generator import GRAL
 import osmnx as ox
 import sumolib as sumo
 import os
+from osm.osm_file_processor import OSMFileProcessor
 
 
 def create_shapefile(geo_df, coordinate_system, directory, filename):
@@ -57,7 +58,7 @@ def main(args):
 
         # Process based on the specified argument
         if args.process in ['all', 'buildings']:
-            buildings_gdf = buildings_module.process_buildings()
+            buildings_gdf = buildings_module.process_buildings(osm_file=args.osm_file)
             create_shapefile(
                 buildings_gdf,
                 f"EPSG:{args.epsg}",
@@ -84,12 +85,12 @@ def main(args):
                     weather_module.write_to_files(
                         hour_met_file_df, f'{args.output_weather_file}_{args.weather_day}_{args.weather_hour}.met')
 
-        if args.process in ['all', 'highway']:
+        if args.process in ['all', 'highways']:
 
             # Read the SUMO network file
             net_file = sumo.net.readNet(f'{args.net_file}')
 
-            highway_gdf = highways_module.process_highway_data(net_file)
+            highway_gdf = highways_module.process_highway_data(net_file, args.osm_file)
 
             # Read the SUMO emissions file
             sumo_emissions_df = highways_module.process_sumo_edges_emissions_file(
@@ -118,6 +119,10 @@ def main(args):
                 args.map_filename
             )
         if args.process in ['gral']:
+            if args.osm_file is not None:
+                osm_file_processor = OSMFileProcessor(args.osm_file)
+                location = osm_file_processor.get_bounds_from_osm_file()
+            
             # Generate the files for GRAL executable
             # Convert the coordinates to EPSG
             west_point_epsg_new_x, north_point_epsg_new_y = maps_module.convert_coordinates(
@@ -128,7 +133,8 @@ def main(args):
             # Dictionary with the location coordinates in EPSG:3857
             location_epsg_new = {"north": north_point_epsg_new_y, "south": south_point_epsg_new_y,
                                  "east": east_point_epsg_new_x, "west": west_point_epsg_new_x}
-
+            
+            # Define the pollutant
             pollutant = "NOx"
             # Define horizontal layers to simulate in meters
             horizontal_layers = [3,6,9,12,15]

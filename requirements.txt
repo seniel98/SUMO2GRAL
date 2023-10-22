@@ -3,6 +3,7 @@ osmnx>=0.16.2
 sumolib>=1.8.0
 numpy>=1.19.0
 geopandas>=0.8.0
+osmium>=3.5.0
 cartopy>=0.18.0
 pyproj>=2.6.1
 shapely~=2.0.1

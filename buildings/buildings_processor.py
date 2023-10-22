@@ -1,10 +1,16 @@
 
 import numpy as np
 import osmnx as ox
+import geopandas as gpd
 from geopandas import GeoDataFrame
 from shapely import geometry
+from shapely.ops import polygonize
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
+from osm.osm_file_processor import OSMFileProcessor
+import os
+
 
 # Path: buildings/buildings_processor.py
 
@@ -57,7 +63,7 @@ class BuildingProcessor:
         buildings_gdf = buildings_gdf[buildings_gdf["element_type"] != "point"]
         # Drop elements on the geometry columns that are not polygons
         buildings_gdf = buildings_gdf[buildings_gdf["geometry"].apply(
-            lambda x: isinstance(x, geometry.Polygon))]
+            lambda x: isinstance(x, geometry.Polygon) or isinstance(x, geometry.MultiPolygon))]
         # Remove the columns that we don't need
         columns_we_need = ["osmid", "building", "geometry", "building:levels"]
         # Replace all that contain a ',' with a nan value
@@ -66,7 +72,7 @@ class BuildingProcessor:
         buildings_gdf = buildings_gdf[columns_we_need]
         return buildings_gdf
 
-    def retrieve_building_data(self) -> GeoDataFrame:
+    def retrieve_building_data(self, osm_file=None) -> GeoDataFrame:
         """
         Retrieves building data from OpenStreetMap within the bounding box defined by north, south, east, and west coordinates.
         Only buildings with the 'building' tag are included.
@@ -76,8 +82,26 @@ class BuildingProcessor:
         """
         print("Retrieving building data...")
         # Get the building data
-        buildings_gdf = ox.features.features_from_bbox(
-            north=self.location["north"], south=self.location["south"], east=self.location["east"], west=self.location["west"], tags={'building': True})
+        # Check if the osm_file is not None so we can use it instead of downloading the data
+        if osm_file is not None:
+        
+            # Create an instance of the OSMFileProcessor class
+            osm_file_processor = OSMFileProcessor(osm_file)
+            
+            # Process the OSM file and return a GeoDataFrame with the building data
+            buildings_gdf = osm_file_processor.process_osm_file(type="buildings")
+
+            buildings_gdf['element_type'] = 'relation'
+            
+            # Explode the multipolygons to create a polygon for each building
+            gdf_exploded= buildings_gdf.explode()
+            
+            # Reset the index and drop the old index column
+            buildings_gdf = gdf_exploded.reset_index(drop=True)
+
+        else:
+            buildings_gdf = ox.features.features_from_bbox(
+                north=self.location["north"], south=self.location["south"], east=self.location["east"], west=self.location["west"], tags={'building': True})
         # Clean the buildings
         buildings_gdf = self.clean_buildings(buildings_gdf)
         return buildings_gdf
@@ -154,14 +178,14 @@ class BuildingProcessor:
         buildings_gdf["height"] = buildings_gdf["height"].replace(0, 3)
         return buildings_gdf
     
-    def process_buildings(self)-> GeoDataFrame:
+    def process_buildings(self, osm_file=None)-> GeoDataFrame:
         """
         Processes building data from OpenStreetMap.
 
         Returns:
             GeoDataFrame: A GeoDataFrame containing the processed building data.
         """
-        buildings_gdf = self.retrieve_building_data()
+        buildings_gdf = self.retrieve_building_data(osm_file=osm_file)
         buildings_gdf = self.insert_levels_to_buildings(buildings_gdf)
         buildings_gdf = self.convert_levels_to_height(buildings_gdf)
         return buildings_gdf

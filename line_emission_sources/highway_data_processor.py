@@ -4,6 +4,9 @@ import numpy as np
 from geopandas import GeoDataFrame
 import sumolib as sumo
 from tqdm import tqdm
+import os
+from osm.osm_file_processor import OSMFileProcessor
+
 
 
 class HighwayDataProcessor:
@@ -33,7 +36,7 @@ class HighwayDataProcessor:
         """
         self.location = location
 
-    def retrieve_highway_data(self):
+    def retrieve_highway_data(self, osm_file=None):
         """
         Retrieves highway data from OpenStreetMap within a specified bounding box.
 
@@ -41,16 +44,31 @@ class HighwayDataProcessor:
             GeoDataFrame: A GeoDataFrame containing the highway data within the specified bounding box.
         """
         print("Retrieving highway data...")
-        # Get the highway data
-        highways_gdf = ox.features.features_from_bbox(
-            north=self.location["north"],
-            south=self.location["south"],
-            east=self.location["east"],
-            west=self.location["west"],
-            tags={'highway': True}
-        )
+        if osm_file is not None:
+
+            # Create an instance of the OSMFileProcessor class
+            osm_file_processor = OSMFileProcessor(osm_file)
+
+            # Process the OSM file and return a GeoDataFrame with the building data
+            highways_gdf = osm_file_processor.process_osm_file(type="highways")
+
+            # Add the element type column
+            highways_gdf['element_type'] = 'way'
+
+        else:
+            # Get the highway data
+            highways_gdf = ox.features.features_from_bbox(
+                north=self.location["north"],
+                south=self.location["south"],
+                east=self.location["east"],
+                west=self.location["west"],
+                tags={'highway': True}
+            )
+
         # Clean the highways
         highways_gdf = self.clean_highway(highways_gdf)
+        print(highways_gdf)
+        return
         return highways_gdf
 
     @staticmethod
@@ -152,8 +170,18 @@ class HighwayDataProcessor:
         highway_gdf["width"] = highway_gdf["width"].astype(int)
         return highway_gdf
 
-    def process_highway_data(self, sumo_net):
-        highway_gdf = self.retrieve_highway_data()
+    def process_highway_data(self, sumo_net, osm_file=None):
+        """
+        Processes highway data by retrieving the highway data, inserting lanes to the highway, calculating the width of the highway,
+
+        Args:
+            sumo_net (sumolib.net.Net): A sumolib net object containing the SUMO network.
+            osm_file (str, optional): The path to the OSM file. Defaults to None.
+
+        Returns:
+            GeoDataFrame: A GeoDataFrame containing the processed highway data.
+        """
+        highway_gdf = self.retrieve_highway_data(osm_file)
         highway_gdf = self.insert_lanes_to_highway(highway_gdf, sumo_net)
         highway_gdf = self.calculate_width_of_highway(highway_gdf)
         highway_gdf = self.add_emission_src_group(highway_gdf)

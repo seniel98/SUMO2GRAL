@@ -19,6 +19,7 @@ S2G is a project aimed at simplifying the process of estimating pollutant concen
 - geopandas
 - cartopy
 - pyproj
+- osmium
 
 ## Setup
 
@@ -52,6 +53,7 @@ python CLI.py --base_directory /path/to/base/directory --north 39.49 --south 39.
 - `line_emission_sources/highway_data_processor.py`: Processes highway data to create shapefiles and processes SUMO emissions files.
 - `maps/maps_processor.py`: Generates georeferenced maps based on the specified geographic bounds.
 - `gral/gral_files_generator.py`: Automates the creation of required GRAL simulation files.
+- `osm/osm_file_processor.py`: Processes OpenStreetMap local data to create shapefiles.
 - `main.py`: Orchestrates the data processing based on user inputs.
 - `cli.py`: Provides a command line interface for the project.
 
@@ -59,7 +61,7 @@ python CLI.py --base_directory /path/to/base/directory --north 39.49 --south 39.
 
 - `--base_directory`: The base directory for the project.
 - `--north`, `--south`, `--east`, `--west`: The coordinates of the bounding box.
-- `--epsg`: The EPSG code for the coordinate system to reproject the map to. (Must be different than EPSG:4326. **This is because GRAL does not support EPSG:4326.**)
+- `--epsg`: The EPSG code for the coordinate system to reproject the map to. (Must be different than EPSG:4326. **This is because GRAL does not support EPSG:4326.**) (Default:EPSG:3857)
 - `--process`: Specify the process to run. Choices are: map, buildings, weather, highway, gral, all. (Note: All does not include gral)
 - `--map_name`: The name of the map file to be saved.
 - `--buildings_shp_file`: The name of the shapefile to be saved.
@@ -71,6 +73,7 @@ python CLI.py --base_directory /path/to/base/directory --north 39.49 --south 39.
 - `--weather_hour`: The hour of the weather data to extract, format (hh:mm).
 - `--met_file`: The name of the met file. (Default: weather.met)
 - `--gral_exe`: The name of the GRAL executable. (Default: GRAL.exe)
+- `--osm_file`: The name of the OSM file.
 
 ### Examples
 
@@ -82,21 +85,45 @@ python cli.py --base_directory /path/to/base/directory --north 39.49 --south 39.
 
 - Generate shapefile for buildings:
 
-```bash
-python cli.py --base_directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --epsg 3857 --process buildings
-```
+  - Retrieve data using the osmnx library
+
+    ```bash
+    python cli.py --base_directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --epsg 3857 --process buildings --buildings_shp_file /path/to/buildings/shp/file/file.shp
+    ```
+  
+  - Retrieve data using the local OSM file
+
+    ```bash
+    python cli.py --base_directory /path/to/base/directory --epsg 3857 --process buildings --osm_file /path/to/osm/file/file.osm --buildings_shp_file /path/to/buildings/shp/file/file.shp
+    ```
 
 - Generate shapefile for line emission sources:
 
-```bash
-python cli.py --base_directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process highway --net_file /path/to/net/file/file.net.xml --emissions_file /path/to/edge/emissions/file/edges_emisisons_file.csv
-```
+  - Retrieve data using the osmnx library
+
+    ```bash
+    python cli.py --base_directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process highway --net_file /path/to/net/file/file.net.xml --emissions_file /path/to/edge/emissions/file/edges_emisisons_file.csv
+    ```
+
+  - Retrieve data using the local OSM file
+
+    ```bash
+    python cli.py --base_directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process highway --net_file /path/to/net/file/file.net.xml --emissions_file /path/to/edge/emissions/file/edges_emisisons_file.csv --osm_file /path/to/osm/file/file.osm --highways_shp_file /path/to/highways/shp/file/file.shp
+    ```
 
 - Generate the GRAL.exe inputs
 
-```bash
-python cli.py --base_directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process gral --met_file /path/to/met/file/metfile.met
-```
+  - Without inputting the osm file
+
+    ```bash
+    python cli.py --base_directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process gral --met_file /path/to/met/file/metfile.met
+    ```
+  
+  - Inputting the osm file
+
+    ```bash
+    python cli.py --base_directory /path/to/base/directory --process gral --met_file /path/to/met/file/metfile.met --osm_file /path/to/osm/file/file.osm
+    ```
 
 ## GRAL Module Documentation
 
@@ -116,11 +143,16 @@ class GRAL:
     Methods:
         create_greb_file(bbox, horizontal_slices): Creates a GREB file with predefined values.
         create_in_dat_file(particles_ps, dispertion_time, latitude, horizontal_slices): Creates a in.dat file with predefined values.
-        create_meteogpt_file(met_file): Creates a meteogpt.all file with predefined values.
+        create_meteogpt_file(): Creates a meteogpt.all file with predefined values.
         create_pollutant_txt_file(pollutant): Creates a pollutant.txt file with predefined values.
         create_percent_file(): Creates a Percent.txt file with predefined values.
         create_max_proc_file(n_cores): Creates a Max_Proc.txt file with predefined values.
         create_other_txt_requiered_files(pollutant, n_cores): Creates the other txt requiered files with predefined values.
+        create_buildings_file(): Creates a buildings.dat file with predefined values.
+        create_line_emissions_file(pollutant): Creates a line.dat file with predefined values.
+        create_met_time_series_data_file(meteo_file): Creates a mettimeseries.dat file with predefined values.
+        create_dispersion_number_file(): Creates a DispNr.txt file with predefined values.
+        create_other_optional_files(): Creates the other optional files with predefined values.
     """
     ...
 
