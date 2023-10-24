@@ -15,7 +15,7 @@ class GRAL:
     Methods:
         create_greb_file(bbox, horizontal_slices): Creates a GREB file with predefined values.
         create_in_dat_file(particles_ps, dispertion_time, latitude, horizontal_slices): Creates a in.dat file with predefined values.
-        create_meteogpt_file(): Creates a meteogpt.all file with predefined values.
+        create_meteopgt_file(): Creates a meteopgt.all file with predefined values.
         create_pollutant_txt_file(pollutant): Creates a pollutant.txt file with predefined values.
         create_percent_file(): Creates a Percent.txt file with predefined values.
         create_max_proc_file(n_cores): Creates a Max_Proc.txt file with predefined values.
@@ -145,9 +145,9 @@ class GRAL:
 
         print(f'in.dat file created at: {in_dat_file_path}')
 
-    def create_meteogpt_file(self) -> None:
+    def create_meteopgt_file(self) -> None:
         """
-        Creates a meteogpt.all file with predefined values.
+        Creates a meteopgt.all file with predefined values.
 
         Args:
             None
@@ -155,8 +155,8 @@ class GRAL:
         Returns:
             None
         """
-        print('Creating meteogpt.all file...')
-        meteogpt_file_path = f'{self.base_directory}/meteogpt.all'
+        print('Creating meteopgt.all file...')
+        meteopgt_file_path = f'{self.base_directory}/meteopgt.all'
 
         meteo_conditions = {"wind_direction": [],
                             "wind_speed": [], "stability_class": []}
@@ -178,7 +178,7 @@ class GRAL:
             meteo_conditions["wind_speed"] = wind_speed
             meteo_conditions["stability_class"] = stability_class
 
-        with open(meteogpt_file_path, 'w') as file:
+        with open(meteopgt_file_path, 'w') as file:
             file.write(
                 "10,0,10,    !Are dispersion situations classified =0 or not =1\n")
             file.write(
@@ -193,7 +193,7 @@ class GRAL:
                 file.write(
                     f"{wind_direction_sector},{wind_speed[i]},{stability_class[i]},1000\n")
 
-        print(f'meteogpt.all file created at: {meteogpt_file_path}')
+        print(f'meteopgt.all file created at: {meteopgt_file_path}')
 
     def create_pollutant_txt_file(self, pollutant) -> None:
         """

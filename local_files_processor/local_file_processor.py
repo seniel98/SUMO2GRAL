@@ -1,15 +1,14 @@
 
 import geopandas as gpd
-from geopandas import GeoDataFrame
 import os
 import osmium
 import shapely.wkb as wkblib
 import pandas as pd
-from shapely.geometry import Polygon, MultiPolygon
 from tqdm import tqdm
+import sumolib as sumo
 from shapely.geometry import Point, LineString
 
-# Path: osm/osm_file_processor.py
+# Path: local_files_processor/local_file_processor.py
 
 
 class OSMFileProcessor:
@@ -50,8 +49,6 @@ class OSMFileProcessor:
         """
         if type == 'buildings':
             handler = BuildingHandler()
-        elif type == 'highways':
-            handler = HighwayHandler()
         else:
             raise Exception("Invalid type")
         handler.apply_file(self.osm_file)
@@ -117,35 +114,69 @@ class BuildingHandler(osmium.SimpleHandler):
             print(f"An error occurred: {e}")
 
 
-class HighwayHandler(osmium.SimpleHandler):
+class NetFileProcessor:
 
-    def __init__(self):
-        osmium.SimpleHandler.__init__(self)
-        self.wkbfab = osmium.geom.WKBFactory()
-        self.highways = []
+    def __init__(self, sumo_net):
+        """
+        Initialize the NetFileProcessor class
 
-    def way(self, w):
-        if w.tags.get("highway") is not None and w.tags.get("name") is not None:
-            try:
-                points = []
-                for node in w.nodes:
-                    print(w.id, w.nodes)
-                    try:
-                        if node.lat is not None:
-                            n = Point(node.location.lon, node.location.lat)
-                            points.append(n)
-                    except Exception as e:
-                        print('\nSkipping node: {} (x={}, y={}) because of error: {}\n'.format(node.ref, node.location.lat_without_check(), node.location.lon_without_check(), e))
+        Args:
+            sumo_net (sumolib.net.Net): A sumolib net object containing the SUMO network.
+        """
+
+        self.sumo_net = sumo_net
+
+    def process_net_file(self):
+        """
+        Process the SUMO network file and return a GeoDataFrame
+
+        Returns:
+            edges_gdf (GeoDataFrame): The GeoDataFrame of the SUMO network
+        """
+        edges = self.sumo_net.getEdges()
+        edges_id, edges_geometry = self.process_edges(edges)
+        edges_gdf = gpd.GeoDataFrame({'edge_id': edges_id, 'geometry': edges_geometry},geometry='geometry', crs='EPSG:4326')
+        return edges_gdf
     
-                geometry = LineString(points).wkt
-                
-                lanes = w.tags.get("lanes", None)
-                highway = w.tags.get("highway", None)
-                self.highways.append({
-                    "osmid": w.id,
-                    "geometry": geometry,
-                    "lanes": lanes,
-                    "highway": highway
-                })
-            except Exception as e:
-                print(f"An error occurred: {e}")
+    def process_edges(self, edges):
+        """
+        Process the edges of the SUMO network
+
+        Args:
+            edges (list): A list of sumolib.net.Edge objects
+
+        Returns:
+            edges_id (list): A list of the edge IDs
+            edges_geometry (list): A list of the edge geometries
+        """
+        edges_id = []
+        edges_geometry = []
+        for edge in tqdm(edges):
+            edge_shape = list(edge.getRawShape())
+            if len(edge_shape) < 2:
+                continue
+            geometry = self.process_shapes(edge_shape)
+            edges_id.append(edge.getID())
+            edges_geometry.append(geometry)
+        
+        return edges_id, edges_geometry
+
+    
+    def process_shapes(self, edge_shapes):
+        """
+        Process the shapes of the edges of the SUMO network
+
+        Args:
+            edge_shapes (list): A list of the edge shapes
+        
+        Returns:
+            geometry (LineString): The geometry of the edge
+        """
+        points = []
+        for shape in edge_shapes:
+            x, y = shape
+            lon, lat = self.sumo_net.convertXY2LonLat(x, y)
+            points.append(Point(lon, lat))
+        geometry = LineString(points)
+        return geometry
+    

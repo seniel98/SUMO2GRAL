@@ -5,8 +5,7 @@ from maps.maps_processor import MapGenerator as Maps
 from gral.gral_files_generator import GRAL
 import osmnx as ox
 import sumolib as sumo
-import os
-from osm.osm_file_processor import OSMFileProcessor
+from local_files_processor.local_file_processor import OSMFileProcessor
 
 
 def create_shapefile(geo_df, coordinate_system, directory, filename):
@@ -57,8 +56,8 @@ def main(args):
                            args.buildings_shapefile_filename, args.highways_shapefile_filename)
 
         # Process based on the specified argument
-        if args.process in ['all', 'buildings']:
-            buildings_gdf = buildings_module.process_buildings(osm_file=args.osm_file)
+        if args.process in ['all', 'buildings', 'buildings offline']:
+            buildings_gdf = buildings_module.process_buildings(args.process, osm_file=args.osm_file)
             create_shapefile(
                 buildings_gdf,
                 f"EPSG:{args.epsg}",
@@ -85,21 +84,23 @@ def main(args):
                     weather_module.write_to_files(
                         hour_met_file_df, f'{args.output_weather_file}_{args.weather_day}_{args.weather_hour}.met')
 
-        if args.process in ['all', 'highways']:
+        if args.process in ['all', 'highways', 'highways offline']:
 
             # Read the SUMO network file
             net_file = sumo.net.readNet(f'{args.net_file}')
 
-            highway_gdf = highways_module.process_highway_data(net_file, args.osm_file)
-
+            highway_gdf = highways_module.process_highway_data(args.process, net_file, args.osm_file)
+            
             # Read the SUMO emissions file
-            sumo_emissions_df = highways_module.process_sumo_edges_emissions_file(
-                args.emissions_file, net_file, highway_gdf['osmid'].tolist())
+            sumo_emissions_df = highways_module.process_sumo_edges_emissions_file(args.process,
+                args.emissions_file, net_file, highway_gdf)
+            
 
             # Combine the sumo emissions and highway data
-            highway_emissions_gdf = highways_module.combine_sumo_emissions_and_highway_data(
+            highway_emissions_gdf = highways_module.combine_sumo_emissions_and_highway_data(args.process,
                 sumo_emissions_df, highway_gdf)
-
+            
+            # Create the shapefile
             create_shapefile(highway_emissions_gdf,
                              f"EPSG:{args.epsg}", args.base_directory, args.highways_shapefile_filename)
 
@@ -118,8 +119,8 @@ def main(args):
                 args.epsg,
                 args.map_filename
             )
-        if args.process in ['gral']:
-            if args.osm_file is not None:
+        if args.process in ['gral', 'gral offline']:
+            if 'offline' in args.process:
                 osm_file_processor = OSMFileProcessor(args.osm_file)
                 location = osm_file_processor.get_bounds_from_osm_file()
             
@@ -143,8 +144,8 @@ def main(args):
             # Create the in.dat file
             mean_latitude = (location["north"] + location["south"]) / 2
             gral_module.create_in_dat_file(particles_ps=500, dispertion_time=3600, latitude=mean_latitude, horizontal_slices=horizontal_layers)
-            # Create the meteogpt.all file
-            gral_module.create_meteogpt_file()
+            # Create the meteoptg.all file
+            gral_module.create_meteopgt_file()
             # Create the other requiered files
             gral_module.create_other_txt_requiered_files(pollutant=pollutant, n_cores=12)
             # Create the buildings file

@@ -8,7 +8,7 @@ from shapely.ops import polygonize
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from osm.osm_file_processor import OSMFileProcessor
+from local_files_processor.local_file_processor import OSMFileProcessor
 import os
 
 
@@ -72,10 +72,14 @@ class BuildingProcessor:
         buildings_gdf = buildings_gdf[columns_we_need]
         return buildings_gdf
 
-    def retrieve_building_data(self, osm_file=None) -> GeoDataFrame:
+    def retrieve_building_data(self, process="", osm_file=None) -> GeoDataFrame:
         """
         Retrieves building data from OpenStreetMap within the bounding box defined by north, south, east, and west coordinates.
         Only buildings with the 'building' tag are included.
+
+        Args:
+            process (str): The process to run. Can be 'offline'. Defaults to "".
+            osm_file (str, optional): The name of the OSM file. Defaults to None.
 
         Returns:
             GeoDataFrame: A GeoDataFrame containing the retrieved building data.
@@ -83,8 +87,9 @@ class BuildingProcessor:
         print("Retrieving building data...")
         # Get the building data
         # Check if the osm_file is not None so we can use it instead of downloading the data
-        if osm_file is not None:
-        
+        if "offline" in process and osm_file is not None:
+            print("Processing offline...")
+            
             # Create an instance of the OSMFileProcessor class
             osm_file_processor = OSMFileProcessor(osm_file)
             
@@ -178,14 +183,18 @@ class BuildingProcessor:
         buildings_gdf["height"] = buildings_gdf["height"].replace(0, 3)
         return buildings_gdf
     
-    def process_buildings(self, osm_file=None)-> GeoDataFrame:
+    def process_buildings(self, process="" ,osm_file=None)-> GeoDataFrame:
         """
         Processes building data from OpenStreetMap.
+
+        Args:
+            process (str): The process to run. Can be 'offline'. Defaults to "".
+            osm_file (str, optional): The name of the OSM file. Defaults to None.
 
         Returns:
             GeoDataFrame: A GeoDataFrame containing the processed building data.
         """
-        buildings_gdf = self.retrieve_building_data(osm_file=osm_file)
+        buildings_gdf = self.retrieve_building_data(process, osm_file=osm_file)
         buildings_gdf = self.insert_levels_to_buildings(buildings_gdf)
         buildings_gdf = self.convert_levels_to_height(buildings_gdf)
         return buildings_gdf

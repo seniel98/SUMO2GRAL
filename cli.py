@@ -26,8 +26,8 @@ def run_cli():
                             help="The westernmost longitude of the bounding box. Must be in EPSG:4326, and decimal degrees.", required=False, dest="west")
         parser.add_argument("--epsg", type=int,
                             help="The EPSG code for the coordinate system to reproject the map to, ie: 3857.", default=3857, dest="epsg")
-        parser.add_argument("--process", choices=["all", "map", "buildings", "weather", "highways", "gral"],
-                            help="Specify the process to run. Choices are: map, buildings, weather, highway, gral", required=True,  dest="process")
+        parser.add_argument("--process", choices=["all", "map", "buildings", "weather", "highways", "gral", "buildings offline", "highways offline", "gral offline"],
+                            help="Specify the process to run. Choices are: map, buildings, weather, highway, gral, offline", required=True,  dest="process")
         parser.add_argument("--map_name", type=str, default="basemap",
                             help="The name of the map file to be saved.", dest="map_filename")
         parser.add_argument("--buildings_shp_file", type=str, default="buildings",
