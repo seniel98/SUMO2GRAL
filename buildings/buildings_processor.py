@@ -1,15 +1,11 @@
 
 import numpy as np
 import osmnx as ox
-import geopandas as gpd
 from geopandas import GeoDataFrame
 from shapely import geometry
-from shapely.ops import polygonize
 import numpy as np
-import pandas as pd
 from tqdm import tqdm
 from local_files_processor.local_file_processor import OSMFileProcessor
-import os
 
 
 # Path: buildings/buildings_processor.py

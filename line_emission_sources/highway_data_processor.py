@@ -4,7 +4,6 @@ import numpy as np
 from geopandas import GeoDataFrame
 import sumolib as sumo
 from tqdm import tqdm
-import os
 from local_files_processor.local_file_processor import NetFileProcessor
 
 

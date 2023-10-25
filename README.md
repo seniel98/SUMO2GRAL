@@ -53,7 +53,7 @@ python CLI.py --base_directory /path/to/base/directory --north 39.49 --south 39.
 - `line_emission_sources/highway_data_processor.py`: Processes highway data to create shapefiles and processes SUMO emissions files.
 - `maps/maps_processor.py`: Generates georeferenced maps based on the specified geographic bounds.
 - `gral/gral_files_generator.py`: Automates the creation of required GRAL simulation files.
-- `osm/osm_file_processor.py`: Processes OpenStreetMap local data to create shapefiles.
+- `local_files_processor/local_file_processor.py`: Processes local files data to create shapefiles.
 - `main.py`: Orchestrates the data processing based on user inputs.
 - `cli.py`: Provides a command line interface for the project.
 
