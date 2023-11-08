@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import argparse
 from main import main
 
@@ -9,7 +10,7 @@ def run_cli():
             epilog="""
     Examples:
     Retrieve only the map:
-        python CLI.py --base_directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --epsg 3857 --process map
+        python cli.py --base_directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --epsg 3857 --process map
             """,
             formatter_class=argparse.RawTextHelpFormatter
         )

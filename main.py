@@ -1,3 +1,4 @@
+import os
 from buildings.buildings_processor import BuildingProcessor as Buildings
 from weather.weather_processor import WeatherDataProcessor as Weather
 from line_emission_sources.highway_data_processor import HighwayDataProcessor as Highways
@@ -31,6 +32,7 @@ def create_shapefile(geo_df, coordinate_system, directory, filename):
         geo_df_reprojected.crs = coordinate_system
 
         # Optionally, save the GeoDataFrame to a file
+        os.makedirs(directory, exist_ok=True)
         geo_df_reprojected.to_file(
             f'{directory}/{filename}', driver='ESRI Shapefile')
     except Exception as e:
@@ -161,4 +163,4 @@ def main(args):
 
 
 if __name__ == "__main__":
-    print("Please run the CLI.py script to use this program.")
+    print("Please run the cli.py script to use this program.")
