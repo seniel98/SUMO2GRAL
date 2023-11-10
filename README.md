@@ -41,7 +41,7 @@ pip install -r requirements.txt
 Run the command line interface (CLI) script with the desired arguments to process the data and generate the required files:
 
 ```bash
-python CLI.py --base_directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --epsg 3857 --process all  --net_file /path/to/net/file/file.net.xml --emissions_file /path/to/edge/emissions/file/edges_emisisons_file.csv 
+python cli.py --base_directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --epsg 3857 --process all  --net_file /path/to/net/file/file.net.xml --emissions_file /path/to/edge/emissions/file/edges_emissions_file.xml
 ```
 
 ## Documentation
@@ -102,13 +102,13 @@ python cli.py --base_directory /path/to/base/directory --north 39.49 --south 39.
   - Retrieve data using the osmnx library
 
     ```bash
-    python cli.py --base_directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process highway --net_file /path/to/net/file/file.net.xml --emissions_file /path/to/edge/emissions/file/edges_emisisons_file.xml
+    python cli.py --base_directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process highway --net_file /path/to/net/file/file.net.xml --emissions_file /path/to/edge/emissions/file/edges_emissions_file.xml
     ```
 
   - Retrieve data using the local OSM file
 
     ```bash
-    python cli.py --base_directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process "highway offline" --net_file /path/to/net/file/file.net.xml --emissions_file /path/to/edge/emissions/file/edges_emisisons_file.xml --osm_file /path/to/osm/file/file.osm --highways_shp_file /path/to/highways/shp/file/file.shp
+    python cli.py --base_directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process "highway offline" --net_file /path/to/net/file/file.net.xml --emissions_file /path/to/edge/emissions/file/edges_emissions_file.xml --osm_file /path/to/osm/file/file.osm --highways_shp_file /path/to/highways/shp/file/file.shp
     ```
 
 - Generate the GRAL.exe inputs
