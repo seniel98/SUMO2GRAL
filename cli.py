@@ -38,13 +38,15 @@ def run_cli():
                             dest="net_file")
         parser.add_argument("--emissions_file", type=str, default="emissions.xml",
                             help="The name of the SUMO emissions file.", dest="emissions_file")
-        parser.add_argument("--weather_file", type=str, default="weather_data.txt",
+        parser.add_argument("--weather_file", type=str,
                             help="The name of the weather data file.", dest="weather_file")
+        parser.add_argument("--output_weather_file", type=str, default="output_weather_data",
+                            help="The name of the output weather data file.", dest="output_weather_file")
         parser.add_argument("--weather_day", type=str,
                             help="The day of the weather data to extract, format (dd.mm.yyyy)", dest="weather_day", default=None)
         parser.add_argument("--weather_hour", type=str,
                             help="The hour of the weather data to extract, format (hh:mm)", dest="weather_hour", default=None)
-        parser.add_argument("--met_file", type=str, default="weather.met", help="The name of the met file.",
+        parser.add_argument("--met_file", type=str, default="weather", help="The name of the met file.",
                             dest="met_file")
         parser.add_argument("--gral_exe", type=str, default="GRAL.exe",
                             help="The name of the GRAL executable.", dest="gral_exe")
