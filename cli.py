@@ -47,7 +47,7 @@ def run_cli():
                             help="The day of the weather data to extract, format (dd.mm.yyyy)", dest="weather_day", default=None)
         parser.add_argument("--weather_hour", type=str,
                             help="The hour of the weather data to extract, format (hh:mm)", dest="weather_hour", default=None)
-        parser.add_argument("--met_file", type=str, default="weather", help="The name of the met file.",
+        parser.add_argument("--met_file", type=str, default="weather.met", help="The name of the met file.",
                             dest="met_file")
         parser.add_argument("--gral_exe", type=str, default="GRAL.exe",
                             help="The name of the GRAL executable.", dest="gral_exe")

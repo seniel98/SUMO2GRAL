@@ -160,7 +160,7 @@ class GRAL:
 
         meteo_conditions = {"wind_direction": [],
                             "wind_speed": [], "stability_class": []}
-        with open(self.met_file, 'r') as file:
+        with open(f'{self.base_directory}/{self.met_file}') as file:
             wind_direction = []
             wind_speed = []
             stability_class = []

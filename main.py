@@ -73,15 +73,13 @@ def main(args):
                 weather_df, met_file_df = weather_module.create_default_files()
                 weather_module.write_to_files(
                     weather_df, f'default_{args.output_weather_file}.csv', False)
-                weather_module.write_to_files(
-                    met_file_df, f'default_{args.met_file}.met')
+                weather_module.write_to_files(met_file_df, args.met_file)
             else:
                 weather_df, met_file_df = weather_module.process_weather_data(
                     args.weather_file)
                 weather_module.write_to_files(
                     weather_df, f'{args.output_weather_file}.csv', False)
-                weather_module.write_to_files(
-                    met_file_df, f'{args.met_file}.met')
+                weather_module.write_to_files(met_file_df, args.met_file)
                 if not args.weather_day is None:
                     day_met_file_df = met_file_df[met_file_df['fecha']
                                                 == args.weather_day]
@@ -159,7 +157,7 @@ def main(args):
             gral_module.create_in_dat_file(particles_ps=500, dispertion_time=3600, latitude=mean_latitude, horizontal_slices=horizontal_layers)
             # Create the meteoptg.all file
             gral_module.create_meteopgt_file()
-            # Create the other requiered files
+            # Create the other required files
             gral_module.create_other_txt_requiered_files(pollutant=pollutant, n_cores=12)
             # Create the buildings file
             gral_module.create_buildings_file()
