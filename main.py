@@ -68,23 +68,34 @@ def main(args):
             )
 
         if args.process in ['all', 'weather']:
-            weather_df, met_file_df = weather_module.process_weather_data(
-                args.input_weather_file)
-            weather_module.create_met_file(met_file_df)
-            weather_module.write_to_files(
-                weather_df, f'{args.output_weather_file}.csv')
-            weather_module.write_to_files(
-                met_file_df, f'{args.output_weather_file}.met')
-            if not args.weather_day is None:
-                day_met_file_df = met_file_df[met_file_df['fecha']
-                                              == args.weather_day]
+            if args.weather_file is None:
+                print("No weather file specified, creating default weather and met files...")
+                weather_df, met_file_df = weather_module.create_default_files()
                 weather_module.write_to_files(
-                    day_met_file_df, f'{args.output_weather_file}_{args.weather_day}.met')
-                if not args.weather_hour is None:
-                    hour_met_file_df = day_met_file_df[(
-                        day_met_file_df['hora'] == args.weather_hour)]
+                    weather_df, f'default_{args.output_weather_file}.csv', False)
+                weather_module.write_to_files(
+                    met_file_df, f'default_{args.met_file}.met')
+            else:
+                weather_df, met_file_df = weather_module.process_weather_data(
+                    args.weather_file)
+                weather_module.write_to_files(
+                    weather_df, f'{args.output_weather_file}.csv', False)
+                weather_module.write_to_files(
+                    met_file_df, f'{args.met_file}.met')
+                if not args.weather_day is None:
+                    day_met_file_df = met_file_df[met_file_df['fecha']
+                                                == args.weather_day]
+                    # Replace the point with a underscore
+                    args.weather_day = args.weather_day.replace('.', '_')
                     weather_module.write_to_files(
-                        hour_met_file_df, f'{args.output_weather_file}_{args.weather_day}_{args.weather_hour}.met')
+                        day_met_file_df, f'{args.met_file}_{args.weather_day}.met')
+                    if not args.weather_hour is None:
+                        hour_met_file_df = day_met_file_df[(
+                            day_met_file_df['hora'] == args.weather_hour)]
+                        # Replace the colon with a underscore
+                        args.weather_hour = args.weather_hour.replace(':', '_')
+                        weather_module.write_to_files(
+                            hour_met_file_df, f'{args.met_file}_{args.weather_day}_{args.weather_hour}.met')
 
         if args.process in ['all', 'highways', 'highways offline']:
 
