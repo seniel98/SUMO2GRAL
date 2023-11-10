@@ -5,6 +5,7 @@ from geopandas import GeoDataFrame
 import sumolib as sumo
 from tqdm import tqdm
 from local_files_processor.local_file_processor import NetFileProcessor
+import io
 
 
 class HighwayDataProcessor:
@@ -215,22 +216,42 @@ class HighwayDataProcessor:
             highway_gdf (GeoDataFrame): A GeoDataFrame containing the highway data.
 
         Returns:
-            pandas.DataFrame: A DataFrame with the aggregated emissions per OSM ID, with columns 'osmid', 'edge_NOx_normed',
-            and 'edge_PMx_normed'.
+            pandas.DataFrame: A DataFrame with the aggregated emissions per OSM ID, with columns 'osmid', 'NOx_normed',
+            and 'PMx_normed'.
         """
         print("Reading sumo emissions file...")
         if 'offline' not in process:
-            sumo_emissions_df = pd.read_csv(filename, delimiter=";")
+            # Read the xml without the interval row
+            sumo_emissions_df = pd.read_xml(filename,
+                 namespaces={"xsi": "http://sumo.dlr.de/xsd/meandata_file.xsd"}, xpath=".//edge", parser="lxml")
+            
+            # If the interval row exists in the xml file read it again properly
+            if sumo_emissions_df.empty:
+                sumo_emissions_df = pd.read_xml(filename,
+                 namespaces={"xsi": "http://sumo.dlr.de/xsd/meandata_file.xsd"}, xpath=".//interval/edge", parser="lxml")
+            
+            # Rename the id column to edge_id
+            sumo_emissions_df.rename(columns={"id": "edge_id"}, inplace=True)
 
             osm_id_list = highway_gdf['osmid'].tolist()
             # Convert edges to osm id
             sumo_emissions_df = self.convert_sumo_edges_to_osm_id(
                 sumo_emissions_df, sumo_net, osm_id_list)
             sumo_emissions_df = sumo_emissions_df.groupby('osmid').agg(
-                {'edge_NOx_normed': 'sum', 'edge_PMx_normed': 'sum'})
+                {'NOx_normed': 'sum', 'PMx_normed': 'sum'})
             sumo_emissions_df.reset_index(inplace=True)
         else:
-            sumo_emissions_df = pd.read_csv(filename, delimiter=";")
+            # Read the xml without the interval row
+            sumo_emissions_df = pd.read_xml(filename,
+                 namespaces={"xsi": "http://sumo.dlr.de/xsd/meandata_file.xsd"}, xpath=".//edge", parser="lxml")
+            
+            # If the interval row exists in the xml file read it again properly
+            if sumo_emissions_df.empty:
+                sumo_emissions_df = pd.read_xml(filename,
+                 namespaces={"xsi": "http://sumo.dlr.de/xsd/meandata_file.xsd"}, xpath=".//interval/edge", parser="lxml")
+            
+            # Rename the id column to edge_id
+            sumo_emissions_df.rename(columns={"id": "edge_id"}, inplace=True)
 
         return sumo_emissions_df
 
@@ -295,7 +316,7 @@ class HighwayDataProcessor:
                 sumo_emissions_df, highway_gdf, on="osmid", how="outer")
             # Join rows with the same osmid
             sumo_emissions_highway_df = sumo_emissions_highway_df.groupby("osmid").agg(
-                {"edge_NOx_normed": "sum", "edge_PMx_normed": "sum", "highway": "first", "geometry": "first", "lanes": "first", "width": "first", "emission_src_group": "first"})
+                {"NOx_normed": "sum", "PMx_normed": "sum", "highway": "first", "geometry": "first", "lanes": "first", "width": "first", "emission_src_group": "first"})
             # Clean the sumo emissions and highway data
             sumo_emissions_highway_df = self.clean_sumo_emisisons_highway_data(
                 sumo_emissions_highway_df)
@@ -308,7 +329,7 @@ class HighwayDataProcessor:
             sumo_emissions_highway_df = pd.merge(
                 sumo_emissions_df, highway_gdf, on="edge_id")
             # Clean df only with the columns we need
-            columns_we_need = ["edge_id", "edge_NOx_normed", "edge_PMx_normed",
+            columns_we_need = ["edge_id", "NOx_normed", "PMx_normed",
                                "geometry", "lanes", "width", "emission_src_group"]
             sumo_emissions_highway_df = sumo_emissions_highway_df[columns_we_need]
             # Convert DataFrame to GeoDataFrame
