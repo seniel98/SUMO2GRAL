@@ -58,7 +58,7 @@ def main(args):
                            args.buildings_shapefile_filename, args.highways_shapefile_filename)
 
         # Process based on the specified argument
-        if args.process in ['all', 'buildings', 'buildings offline']:
+        if args.process in ['all', 'all offline', 'buildings', 'buildings offline']:
             buildings_gdf = buildings_module.process_buildings(args.process, osm_file=args.osm_file)
             create_shapefile(
                 buildings_gdf,
@@ -67,7 +67,7 @@ def main(args):
                 args.buildings_shapefile_filename
             )
 
-        if args.process in ['all', 'weather']:
+        if args.process in ['all','all offline', 'weather']:
             if args.weather_file is None:
                 print("No weather file specified, creating default weather and met files...")
                 weather_df, met_file_df = weather_module.create_default_files()
@@ -95,7 +95,7 @@ def main(args):
                         weather_module.write_to_files(
                             hour_met_file_df, f'{args.met_file}_{args.weather_day}_{args.weather_hour}.met')
 
-        if args.process in ['all', 'highways', 'highways offline']:
+        if args.process in ['all', 'all offline', 'highways', 'highways offline']:
 
             # Read the SUMO network file
             net_file = sumo.net.readNet(f'{args.net_file}')
@@ -115,7 +115,10 @@ def main(args):
             create_shapefile(highway_emissions_gdf,
                              f"EPSG:{args.epsg}", args.base_directory, args.highways_shapefile_filename)
 
-        if args.process in ['all', 'map']:
+        if args.process in ['all', 'all offline', 'map']:
+            if 'offline' in args.process:
+                osm_file_processor = OSMFileProcessor(args.osm_file)
+                location = osm_file_processor.get_bounds_from_osm_file()
             # Convert the coordinates to EPSG
             west_point_epsg_new_x, north_point_epsg_new_y = maps_module.convert_coordinates(
                 location["west"], location["north"], 4326, args.epsg)
@@ -130,7 +133,7 @@ def main(args):
                 args.epsg,
                 args.map_filename
             )
-        if args.process in ['gral', 'gral offline']:
+        if args.process in ['all offline', 'gral', 'gral offline']:
             if 'offline' in args.process:
                 osm_file_processor = OSMFileProcessor(args.osm_file)
                 location = osm_file_processor.get_bounds_from_osm_file()
@@ -162,7 +165,7 @@ def main(args):
             # Create the buildings file
             gral_module.create_buildings_file()
             # Create the line emission sources file
-            gral_module.create_line_emissions_file(pollutant=pollutant)
+            gral_module.create_line_emissions_file(pollutant=pollutant, process=args.process)
             # Create the other optional files
             gral_module.create_other_optional_files()
             # Run the GRAL executable

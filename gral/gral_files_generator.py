@@ -273,7 +273,7 @@ class GRAL:
             None
         """
         print('Creating buildings file...')
-        buildings_gdf = gpd.read_file(self.buildings_file)
+        buildings_gdf = gpd.read_file(f'{self.base_directory}/{self.buildings_file}')
         buildings_file_path = f'{self.base_directory}/buildings.dat'
         with open(buildings_file_path, 'w') as file:
             for index, row in buildings_gdf.iterrows():
@@ -282,18 +282,22 @@ class GRAL:
 
         print(f'buildings.dat file created at: {buildings_file_path}')
 
-    def create_line_emissions_file(self, pollutant) -> None:
+    def create_line_emissions_file(self, pollutant, process) -> None:
         """
         Creates a line.dat file with predefined values.
         
         Args:
             pollutant (str): The name of the pollutant.
+            process (str): The process to run. Can be 'offline'.
         
         Returns:
             None
         """
         print('Creating line emissions file...')
-        line_gdf = gpd.read_file(self.line_file)
+        id= "osm_id"
+        if 'offline' in process:
+            id = "edge_id"
+        line_gdf = gpd.read_file(f'{self.base_directory}/{self.line_file}')
         line_file_path = f'{self.base_directory}/line.dat'
         with open(line_file_path, 'w') as file:
             file.write("Generated: \n")
@@ -303,7 +307,7 @@ class GRAL:
                 f"StrName,Section,Sourcegroup,x1,y1,z1,x2,y2,z2,width,noiseabatementwall,Length[km],--,{pollutant}[kg/(km*h)],--,--,--,--,--,deposition data\n")
             for index, row in line_gdf.iterrows():
                 minx, miny, maxx, maxy = row['geometry'].bounds
-                file.write(f'{row["osmid"]},1,1,{round(minx,1)},{round(miny,1)},0,{round(maxx,1)},{round(maxy,1)},0,{row["width"]},-3,0,0,{convert_g_to_kg(float(row[f"edge_{pollutant}_n"]))},0,0,0,0,0,0,0,0,0,0,0,0,0\n')
+                file.write(f'{row[id]},1,1,{round(minx,1)},{round(miny,1)},0,{round(maxx,1)},{round(maxy,1)},0,{row["width"]},-3,0,0,{convert_g_to_kg(float(row[f"{pollutant}_normed"]))},0,0,0,0,0,0,0,0,0,0,0,0,0\n')
 
         print(f'line.dat file created at: {line_file_path}')
 
@@ -319,7 +323,7 @@ class GRAL:
         """
         print('Creating met time series data file...')
         met_time_series_data_file_path = f'{self.base_directory}/mettimeseries.dat'
-        meteo_df = pd.read_csv(meteo_file, sep=',', header=None)
+        meteo_df = pd.read_csv(f'{self.base_directory}/{meteo_file}', sep=',', header=None)
         meteo_df.columns = ['day', 'time', 'wind_speed',
                             'wind_direction', 'stability_class']
         with open(met_time_series_data_file_path, 'w') as file:
