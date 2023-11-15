@@ -58,8 +58,8 @@ def main(args):
                            args.buildings_shapefile_filename, args.highways_shapefile_filename)
 
         # Process based on the specified argument
-        if args.process in ['all', 'all offline', 'buildings', 'buildings offline']:
-            buildings_gdf = buildings_module.process_buildings(args.process, osm_file=args.osm_file)
+        if args.process in ['all','buildings']:
+            buildings_gdf = buildings_module.process_buildings(args.is_online, osm_file=args.osm_file)
             create_shapefile(
                 buildings_gdf,
                 f"EPSG:{args.epsg}",
@@ -67,7 +67,7 @@ def main(args):
                 args.buildings_shapefile_filename
             )
 
-        if args.process in ['all','all offline', 'weather']:
+        if args.process in ['all', 'weather']:
             if args.weather_file is None:
                 print("No weather file specified, creating default weather and met files...")
                 weather_df, met_file_df = weather_module.create_default_files()
@@ -95,28 +95,28 @@ def main(args):
                         weather_module.write_to_files(
                             hour_met_file_df, f'{args.met_file}_{args.weather_day}_{args.weather_hour}.met')
 
-        if args.process in ['all', 'all offline', 'highways', 'highways offline']:
+        if args.process in ['all', 'highways']:
 
             # Read the SUMO network file
             net_file = sumo.net.readNet(f'{args.net_file}')
 
-            highway_gdf = highways_module.process_highway_data(args.process, net_file, args.osm_file)
+            highway_gdf = highways_module.process_highway_data(args.is_online, net_file, args.osm_file)
             
             # Read the SUMO emissions file
-            sumo_emissions_df = highways_module.process_sumo_edges_emissions_file(args.process,
+            sumo_emissions_df = highways_module.process_sumo_edges_emissions_file(args.is_online,
                 args.emissions_file, net_file, highway_gdf)
             
 
             # Combine the sumo emissions and highway data
-            highway_emissions_gdf = highways_module.combine_sumo_emissions_and_highway_data(args.process,
+            highway_emissions_gdf = highways_module.combine_sumo_emissions_and_highway_data(args.is_online,
                 sumo_emissions_df, highway_gdf)
             
             # Create the shapefile
             create_shapefile(highway_emissions_gdf,
                              f"EPSG:{args.epsg}", args.base_directory, args.highways_shapefile_filename)
 
-        if args.process in ['all', 'all offline', 'map']:
-            if 'offline' in args.process:
+        if args.process in ['all', 'map']:
+            if not args.is_online:
                 osm_file_processor = OSMFileProcessor(args.osm_file)
                 location = osm_file_processor.get_bounds_from_osm_file()
             # Convert the coordinates to EPSG
@@ -133,8 +133,8 @@ def main(args):
                 args.epsg,
                 args.map_filename
             )
-        if args.process in ['all offline', 'gral', 'gral offline']:
-            if 'offline' in args.process:
+        if args.process in ['all', 'gral']:
+            if args.north is None or args.south is None or args.east is None or args.west is None:
                 osm_file_processor = OSMFileProcessor(args.osm_file)
                 location = osm_file_processor.get_bounds_from_osm_file()
             
@@ -161,11 +161,11 @@ def main(args):
             # Create the meteoptg.all file
             gral_module.create_meteopgt_file()
             # Create the other required files
-            gral_module.create_other_txt_requiered_files(pollutant=pollutant, n_cores=12)
+            gral_module.create_other_txt_requiered_files(pollutant=pollutant, n_cores=4)
             # Create the buildings file
             gral_module.create_buildings_file()
             # Create the line emission sources file
-            gral_module.create_line_emissions_file(pollutant=pollutant, process=args.process)
+            gral_module.create_line_emissions_file(pollutant=pollutant, is_online=args.is_online)
             # Create the other optional files
             gral_module.create_other_optional_files()
             # Run the GRAL executable

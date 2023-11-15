@@ -68,13 +68,13 @@ class BuildingProcessor:
         buildings_gdf = buildings_gdf[columns_we_need]
         return buildings_gdf
 
-    def retrieve_building_data(self, process="", osm_file=None) -> GeoDataFrame:
+    def retrieve_building_data(self, is_online=False, osm_file=None) -> GeoDataFrame:
         """
         Retrieves building data from OpenStreetMap within the bounding box defined by north, south, east, and west coordinates.
         Only buildings with the 'building' tag are included.
 
         Args:
-            process (str): The process to run. Can be 'offline'. Defaults to "".
+            is_online (bool): The process to run. Tells whether the process is offline (False) or online (True) .
             osm_file (str, optional): The name of the OSM file. Defaults to None.
 
         Returns:
@@ -83,7 +83,7 @@ class BuildingProcessor:
         print("Retrieving building data...")
         # Get the building data
         # Check if the osm_file is not None so we can use it instead of downloading the data
-        if "offline" in process and osm_file is not None:
+        if not is_online and osm_file is not None:
             print("Processing offline...")
             
             # Create an instance of the OSMFileProcessor class

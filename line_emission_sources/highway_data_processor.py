@@ -35,19 +35,19 @@ class HighwayDataProcessor:
         """
         self.location = location
 
-    def retrieve_highway_data(self, process='', sumo_net=None):
+    def retrieve_highway_data(self, is_online=False, sumo_net=None):
         """
         Retrieves highway data from OpenStreetMap within a specified bounding box.
 
         Args:
-            process (str): The process to be done. Can be either 'offline'. Defaults to ''.
+            is_online (bool, optional): Whether to process online or offline. Defaults to False.
             sumo_net (sumolib.net.Net): A sumolib net object containing the SUMO network.
 
         Returns:
             GeoDataFrame: A GeoDataFrame containing the highway data within the specified bounding box.
         """
         print("Retrieving highway data...")
-        if 'offline' in process and sumo_net is not None:
+        if not is_online and sumo_net is not None:
             print("Processing offline...")
 
             # Create an instance of the NetFileProcessor class
@@ -116,13 +116,13 @@ class HighwayDataProcessor:
         n_lanes_prob = np.true_divide(highway_df_copy['lanes'], total_ways)
         return n_lanes_prob
 
-    def insert_lanes_to_highway(self, process, highway_gdf: pd.DataFrame, sumo_net) -> pd.DataFrame:
+    def insert_lanes_to_highway(self, is_online, highway_gdf: pd.DataFrame, sumo_net) -> pd.DataFrame:
         """
         Inserts lanes to a highway GeoDataFrame by replacing 0 values with a random value based on the probability
         distribution of the number of lanes.
 
         Args:
-            process (str): The process to be done. Can be either 'offline'. Defaults to ''.
+            is_online (bool): Whether to process online or offline.
             highway_gdf (pd.DataFrame): A GeoDataFrame containing the highway data.
             sumo_net (sumolib.net.Net): A sumolib net object containing the SUMO network.
 
@@ -131,7 +131,7 @@ class HighwayDataProcessor:
         """
         print("Inserting lanes to highway...")
 
-        if 'offline' in process:
+        if not is_online:
             # Create lanes column
             highway_gdf["lanes"] = 0
             for index, row in tqdm(highway_gdf.iterrows()):
@@ -186,31 +186,31 @@ class HighwayDataProcessor:
         highway_gdf["width"] = highway_gdf["width"].astype(int)
         return highway_gdf
 
-    def process_highway_data(self, process="", sumo_net=None, osm_file=None):
+    def process_highway_data(self, is_online=False, sumo_net=None, osm_file=None):
         """
         Processes highway data by retrieving the highway data, inserting lanes to the highway, calculating the width of the highway,
 
         Args:
-            process (str): The process to be done. Can be either 'offline'. Defaults to ''.
+            is_online (bool, optional): Whether to process online or offline. Defaults to False.
             sumo_net (sumolib.net.Net): A sumolib net object containing the SUMO network. Defaults to None.
             osm_file (str, optional): The path to the OSM file. Defaults to None.
 
         Returns:
             GeoDataFrame: A GeoDataFrame containing the processed highway data.
         """
-        highway_gdf = self.retrieve_highway_data(process, sumo_net)
+        highway_gdf = self.retrieve_highway_data(is_online, sumo_net)
         highway_gdf = self.insert_lanes_to_highway(
-            process, highway_gdf, sumo_net)
+            is_online, highway_gdf, sumo_net)
         highway_gdf = self.calculate_width_of_highway(highway_gdf)
         highway_gdf = self.add_emission_src_group(highway_gdf)
         return highway_gdf
 
-    def process_sumo_edges_emissions_file(self, process, filename, sumo_net, highway_gdf):
+    def process_sumo_edges_emissions_file(self, is_online, filename, sumo_net, highway_gdf):
         """
         Reads a SUMO emissions file and returns a pandas DataFrame with the aggregated emissions per OSM ID.
 
         Args:
-            process (str): The process to be done. Can be either 'offline'. Defaults to ''.
+            is_online (bool): Whether to process online or offline.
             filename (str): The path to the SUMO emissions file.
             sumo_net (sumolib.net.Net): A sumolib net object containing the SUMO network.
             highway_gdf (GeoDataFrame): A GeoDataFrame containing the highway data.
@@ -220,7 +220,7 @@ class HighwayDataProcessor:
             and 'PMx_normed'.
         """
         print("Reading sumo emissions file...")
-        if 'offline' not in process:
+        if is_online:
             # Read the xml without the interval row
             sumo_emissions_df = pd.read_xml(filename,
                  namespaces={"xsi": "http://sumo.dlr.de/xsd/meandata_file.xsd"}, xpath=".//edge", parser="lxml")
@@ -296,13 +296,13 @@ class HighwayDataProcessor:
 
         return edges_emissions_df
 
-    def combine_sumo_emissions_and_highway_data(self, process, sumo_emissions_df: pd.DataFrame, highway_gdf: GeoDataFrame) -> GeoDataFrame:
+    def combine_sumo_emissions_and_highway_data(self, is_online, sumo_emissions_df: pd.DataFrame, highway_gdf: GeoDataFrame) -> GeoDataFrame:
         """
         Combines SUMO emissions and highway data by merging the dataframes on the 'osmid' column, 
         joining rows with the same 'osmid', and cleaning the resulting dataframe. 
 
         Args:
-        process (str): The process to be done. Can be either 'offline'. Defaults to ''.
+        is_online (bool): Whether to process online or offline.
         sumo_emissions_df (pandas.DataFrame): SUMO emissions dataframe.
         highway_gdf (geopandas.GeoDataFrame): Highway geodataframe.
 
@@ -310,7 +310,7 @@ class HighwayDataProcessor:
         pandas.GeoDataFrame: Combined and cleaned SUMO emissions and highway data.
         """
         print("Combining sumo emissions and highway data...")
-        if 'offline' not in process:
+        if is_online:
             # Merge the sumo emissions and highway
             sumo_emissions_highway_df = pd.merge(
                 sumo_emissions_df, highway_gdf, on="osmid", how="outer")

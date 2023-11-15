@@ -18,17 +18,17 @@ def run_cli():
         parser.add_argument("--base-directory", required=True,
                             help="The base directory for the project.", dest="base_directory")
         parser.add_argument("--north", type=float,
-                            help="The northernmost latitude of the bounding box. Must be in EPSG:4326, and decimal degrees.", required=False, dest="north")
+                            help="The northernmost latitude of the bounding box. Must be in EPSG:4326, and decimal degrees.", required=False, dest="north", default=None)
         parser.add_argument("--south", type=float,
-                            help="The southernmost latitude of the bounding box. Must be in EPSG:4326, and decimal degrees.", required=False, dest="south")
+                            help="The southernmost latitude of the bounding box. Must be in EPSG:4326, and decimal degrees.", required=False, dest="south", default=None)
         parser.add_argument("--east", type=float,
-                            help="The easternmost longitude of the bounding box. Must be in EPSG:4326, and decimal degrees.", required=False, dest="east")
+                            help="The easternmost longitude of the bounding box. Must be in EPSG:4326, and decimal degrees.", required=False, dest="east", default=None)
         parser.add_argument("--west", type=float,
-                            help="The westernmost longitude of the bounding box. Must be in EPSG:4326, and decimal degrees.", required=False, dest="west")
+                            help="The westernmost longitude of the bounding box. Must be in EPSG:4326, and decimal degrees.", required=False, dest="west", default=None)
         parser.add_argument("--epsg", type=int,
                             help="The EPSG code for the coordinate system to reproject the map to, ie: 3857.", default=3857, dest="epsg")
-        parser.add_argument("--process", choices=["all", "all offline", "map", "buildings", "weather", "highways", "gral", "buildings offline", "highways offline", "gral offline"],
-                            help="Specify the process to run. Choices are: map, buildings, weather, highway, gral, offline", required=True,  dest="process")
+        parser.add_argument("--process", choices=["all", "map", "buildings", "weather", "highways", "gral"],
+                            help="Specify the process to run. Choices are: all, map, buildings, weather, highway, gral", required=True,  dest="process")
         parser.add_argument("--map-name", type=str, default="basemap",
                             help="The name of the map file to be saved.", dest="map_filename")
         parser.add_argument("--buildings-shp-file", type=str, default="buildings.shp",
@@ -53,6 +53,8 @@ def run_cli():
                             help="The name of the GRAL executable.", dest="gral_exe")
         parser.add_argument("--osm-file", type=str, default=None,
                             help="The name of the OSM file.", dest="osm_file")
+        parser.add_argument("--online", default=False, action="store_true",
+                            help="The program by default executes the offline mode. If you dont provide any osm or net files it is recommended to use online", dest="is_online")
 
         args = parser.parse_args()
 

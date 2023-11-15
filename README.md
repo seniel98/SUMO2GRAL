@@ -40,8 +40,16 @@ pip install -r requirements.txt
 
 Run the command line interface (CLI) script with the desired arguments to process the data and generate the required files:
 
+Offline mode (*default*):
+
 ```bash
-python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --epsg 3857 --process all  --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml
+python cli.py --base-directory /path/to/base/directory --process all --osm-file /path/to/osm/file/file.osm  --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml 
+```
+
+Online mode (This is in case you want to retrieve the data using the osmnx library):
+
+```bash
+python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --process all  --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml --online
 ```
 
 ## Documentation
@@ -60,9 +68,10 @@ python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.
 ### CLI Arguments
 
 - `--base-directory`: The base directory for the project.
-- `--north`, `--south`, `--east`, `--west`: The coordinates of the bounding box.
+- `--north`, `--south`, `--east`, `--west`: The coordinates of the bounding box. (Default: None)
 - `--epsg`: The EPSG code for the coordinate system to reproject the map to. (Must be different than EPSG:4326. **This is because GRAL does not support EPSG:4326.**) (Default:EPSG:3857)
-- `--process`: Specify the process to run. Choices are: map, buildings, buildings offline ,weather, highway, highway offline, gral, gral offline, all. (Note: All does not include gral)
+- `--process`: Specify the process to run. Choices are: all, map, buildings, weather, highway, gral.
+- `--online`: Specify if the data is to be retrieved using the osmnx library. (Default: False)
 - `--map-name`: The name of the map file to be saved.
 - `--buildings-shp-file`: The name of the shapefile to be saved.
 - `--highways-shp-file`: The name of the shapefile to be saved.
@@ -77,10 +86,10 @@ python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.
 
 ### Examples
 
-- Generate a georeferenced map of the specified geographic bounds:
+- Generate a georeferenced map from the OSM file:
 
 ```bash
-python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --epsg 3857 --process map
+python cli.py --base-directory /path/to/base/directory  --process map --osm-file /path/to/osm/file/file.osm 
 ```
 
 - Generate shapefile for buildings:
@@ -88,13 +97,13 @@ python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.
   - Retrieve data using the osmnx library
 
     ```bash
-    python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --epsg 3857 --process buildings --buildings-shp-file /path/to/buildings/shp/file/file.shp
+    python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --process buildings --online
     ```
   
   - Retrieve data using the local OSM file
 
     ```bash
-    python cli.py --base-directory /path/to/base/directory --epsg 3857 --process "buildings offline" --osm-file /path/to/osm/file/file.osm --buildings-shp-file /path/to/buildings/shp/file/file.shp
+    python cli.py --base-directory /path/to/base/directory --process buildings --osm-file /path/to/osm/file/file.osm
     ```
 
 - Generate shapefile for line emission sources:
@@ -102,13 +111,13 @@ python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.
   - Retrieve data using the osmnx library
 
     ```bash
-    python cli.py --base-directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process highway --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml
+    python cli.py --base-directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process highway --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml --online
     ```
 
   - Retrieve data using the local OSM file
 
     ```bash
-    python cli.py --base-directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process "highway offline" --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml --osm-file /path/to/osm/file/file.osm --highways-shp-file /path/to/highways/shp/file/file.shp
+    python cli.py --base-directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process highway --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml --osm-file /path/to/osm/file/file.osm
     ```
 
 - Generate the GRAL.exe inputs
@@ -122,7 +131,7 @@ python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.
   - Inputting the osm file
 
     ```bash
-    python cli.py --base-directory /path/to/base/directory --process "gral offline" --met-file /path/to/met/file/metfile.met --osm-file /path/to/osm/file/file.osm
+    python cli.py --base-directory /path/to/base/directory --process gral --met-file /path/to/met/file/metfile.met --osm-file /path/to/osm/file/file.osm
     ```
 
 ## GRAL Module Documentation

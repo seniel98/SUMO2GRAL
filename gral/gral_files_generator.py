@@ -282,20 +282,20 @@ class GRAL:
 
         print(f'buildings.dat file created at: {buildings_file_path}')
 
-    def create_line_emissions_file(self, pollutant, process) -> None:
+    def create_line_emissions_file(self, pollutant, is_online=False) -> None:
         """
         Creates a line.dat file with predefined values.
         
         Args:
             pollutant (str): The name of the pollutant.
-            process (str): The process to run. Can be 'offline'.
+            is_online (bool): If the process is online or offline.
         
         Returns:
             None
         """
         print('Creating line emissions file...')
         id= "osm_id"
-        if 'offline' in process:
+        if not is_online:
             id = "edge_id"
         line_gdf = gpd.read_file(f'{self.base_directory}/{self.line_file}')
         line_file_path = f'{self.base_directory}/line.dat'
