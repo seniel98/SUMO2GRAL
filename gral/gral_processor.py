@@ -297,6 +297,8 @@ class GRAL:
         """
         print('Creating line emissions file...')
         id= "osm_id"
+        if pollutant == "PM10":
+            pollutant = "PMx"
         if not is_online:
             id = "edge_id"
         line_gdf = gpd.read_file(f'{self.base_directory}/{self.line_file}')
