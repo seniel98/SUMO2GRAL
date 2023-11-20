@@ -60,7 +60,7 @@ python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.
 - `weather/weather_processor.py`: Processes weather data to match the format required for GRAL simulations.
 - `line_emission_sources/highway_data_processor.py`: Processes highway data to create shapefiles and processes SUMO emissions files.
 - `maps/maps_processor.py`: Generates georeferenced maps based on the specified geographic bounds.
-- `gral/gral_files_generator.py`: Automates the creation of required GRAL simulation files.
+- `gral/gral_processor.py`: Automates the creation of required GRAL simulation files.
 - `local_files_processor/local_file_processor.py`: Processes local files data to create shapefiles.
 - `main.py`: Orchestrates the data processing based on user inputs.
 - `cli.py`: Provides a command line interface for the project.
@@ -136,7 +136,7 @@ python cli.py --base-directory /path/to/base/directory  --process map --osm-file
 
 ## GRAL Module Documentation
 
-The `GRAL` class within the `gral/gral_files_generator.py` module serves to automate the creation of required files for GRAL simulation based on user inputs and predefined values. Below is an outline of its structure and functionalities:
+The `GRAL` class within the `gral/gral_processor.py` module serves to automate the creation of required files for GRAL simulation based on user inputs and predefined values. Below is an outline of its structure and functionalities:
 
 ```python
 class GRAL:
@@ -152,7 +152,7 @@ class GRAL:
     Methods:
         create_greb_file(bbox, horizontal_slices): Creates a GREB file with predefined values.
         create_in_dat_file(particles_ps, dispertion_time, latitude, horizontal_slices): Creates a in.dat file with predefined values.
-        create_meteogpt_file(): Creates a meteogpt.all file with predefined values.
+        create_meteopgt_file(): Creates a meteopgt.all file with predefined values.
         create_pollutant_txt_file(pollutant): Creates a pollutant.txt file with predefined values.
         create_percent_file(): Creates a Percent.txt file with predefined values.
         create_max_proc_file(n_cores): Creates a Max_Proc.txt file with predefined values.
@@ -162,6 +162,8 @@ class GRAL:
         create_met_time_series_data_file(meteo_file): Creates a mettimeseries.dat file with predefined values.
         create_dispersion_number_file(): Creates a DispNr.txt file with predefined values.
         create_other_optional_files(): Creates the other optional files with predefined values.
+        get_number_of_weather_conditions(): Gets the number of weather conditions.
+        rename_results(pollutant, horizontal_layers, n_meteo_conditions): Rename the results files.
     """
     ...
 

@@ -1,6 +1,6 @@
 import geopandas as gpd
 import pandas as pd
-
+import os
 
 class GRAL:
     """
@@ -25,6 +25,8 @@ class GRAL:
         create_met_time_series_data_file(meteo_file): Creates a mettimeseries.dat file with predefined values.
         create_dispersion_number_file(): Creates a DispNr.txt file with predefined values.
         create_other_optional_files(): Creates the other optional files with predefined values.
+        get_number_of_weather_conditions(): Gets the number of weather conditions.
+        rename_results(pollutant, horizontal_layers, n_meteo_conditions): Rename the results files.
     """
 
     def __init__(self, base_directory, met_file, buildings_file, line_file):
@@ -132,11 +134,11 @@ class GRAL:
             file.write(
                 "0 \t ! Stream output for Soundplan 1 = activated, -2 = write buildings height\n")
             file.write(
-                "compressed V02 \t ! Write strong compressed output files\n")
+                "compressed V02 \t ! Write compressed output files\n")
             file.write(
                 "WaitForKeyStroke \t ! Wait for keystroke when exiting GRAL\n")
             file.write(
-                "ASCiiResults 0 \t ! Additional ASCii result files Yes = 1, No = 0\n")
+                "ASCiiResults 1 \t ! Additional ASCii result files Yes = 1, No = 0\n")
             file.write(
                 "0\t ! Adaptive surface roughness - max value [m]. Default: 0 = no adaptive surface roughness\n")
             file.write(
@@ -374,7 +376,55 @@ class GRAL:
         self.create_met_time_series_data_file(self.met_file)
         self.create_dispersion_number_file()
 
-    #############################
+
+    def get_number_of_weather_conditions(self) -> int:
+        """
+        Gets the number of weather conditions.
+        
+        Args:
+            None
+        
+        Returns:
+            int: The number of weather conditions.
+        """
+        meteo_df = pd.read_csv(f'{self.base_directory}/{self.met_file}', sep=',', header=None)
+        meteo_df.columns = ['day', 'time', 'wind_speed',
+                            'wind_direction', 'stability_class']
+        return len(meteo_df)
+    
+
+    def rename_results(self, pollutant, horizontal_layers, n_meteo_conditions=1):
+        """
+        Rename the results files.
+
+        Args:
+            pollutant (str): The name of the pollutant.
+            horizontal_layers (list): List of horizontal slices.
+            n_meteo_conditions (int): Number of weather conditions.
+
+        Returns:
+            None
+        """
+        if n_meteo_conditions > 1:
+            for i in range(1, n_meteo_conditions):
+                if i < 10:
+                    meteo_condition_txt_value = f"0000{i}"
+                elif i < 100:
+                    meteo_condition_txt_value = f"000{i}"
+                elif i < 1000:
+                    meteo_condition_txt_value = f"00{i}"
+                else:
+                    meteo_condition_txt_value = f"0{i}"
+
+                    for n_horitonzal_layer in range(1, len(horizontal_layers)+1):
+                        os.rename(f'{self.base_directory}/{meteo_condition_txt_value}-{n_horitonzal_layer}01.txt', f'{self.base_directory}/results_weather_{i}_{pollutant}_{horizontal_layers[n_horitonzal_layer-1]}m.txt')
+        else:
+            if len(horizontal_layers) > 1:
+                for n_horitonzal_layer in range(1, len(horizontal_layers)+1):
+                    os.rename(f'{self.base_directory}/00001-{n_horitonzal_layer}01.txt', f'{self.base_directory}/results_weather_{1}_{pollutant}_{horizontal_layers[n_horitonzal_layer-1]}m.txt')
+            else:
+                os.rename(f'{self.base_directory}/00001-101.txt', f'{self.base_directory}/results_weather_{1}_{pollutant}_{horizontal_layers[0]}m.txt')
+    ################################
 
 
 def convert_g_to_kg(g) -> float:

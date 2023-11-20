@@ -3,10 +3,11 @@ from buildings.buildings_processor import BuildingProcessor as Buildings
 from weather.weather_processor import WeatherDataProcessor as Weather
 from line_emission_sources.highway_data_processor import HighwayDataProcessor as Highways
 from maps.maps_processor import MapGenerator as Maps
-from gral.gral_files_generator import GRAL
+from gral.gral_processor import GRAL
 import osmnx as ox
 import sumolib as sumo
 from local_files_processor.local_file_processor import OSMFileProcessor
+import subprocess
 
 
 def create_shapefile(geo_df, coordinate_system, directory, filename):
@@ -150,14 +151,14 @@ def main(args):
                                  "east": east_point_epsg_new_x, "west": west_point_epsg_new_x}
             
             # Define the pollutant
-            pollutant = "NOx"
+            pollutant = "PM10"
             # Define horizontal layers to simulate in meters
-            horizontal_layers = [3,6,9,12,15]
+            horizontal_layers = [3,6,9]
             # Create the GREB file
             gral_module.create_greb_file(bbox=location_epsg_new, horizontal_slices=len(horizontal_layers))
             # Create the in.dat file
             mean_latitude = (location["north"] + location["south"]) / 2
-            gral_module.create_in_dat_file(particles_ps=500, dispertion_time=3600, latitude=mean_latitude, horizontal_slices=horizontal_layers)
+            gral_module.create_in_dat_file(particles_ps=100, dispertion_time=3600, latitude=mean_latitude, horizontal_slices=horizontal_layers)
             # Create the meteoptg.all file
             gral_module.create_meteopgt_file()
             # Create the other required files
@@ -168,8 +169,14 @@ def main(args):
             gral_module.create_line_emissions_file(pollutant=pollutant, is_online=args.is_online)
             # Create the other optional files
             gral_module.create_other_optional_files()
+            # Go to the base directory
+            os.chdir(args.base_directory)
             # Run the GRAL executable
-            # os.system(f'{args.gral_exe}')
+            subprocess.run(["dotnet", "run", "--project", args.gral_exe], check=True)
+            # Rename the results files to make them more descriptive
+            n_meteo_conditions = gral_module.get_number_of_weather_conditions()
+            gral_module.rename_results(pollutant=pollutant, horizontal_layers=horizontal_layers, n_meteo_conditions=n_meteo_conditions)
+           
     except Exception as e:
         print(f"An error occurred: {e}")
 
