@@ -116,7 +116,7 @@ def main(args):
             create_shapefile(highway_emissions_gdf,
                              f"EPSG:{args.epsg}", args.base_directory, args.highways_shapefile_filename)
 
-        if args.process in ['all', 'map']:
+        if args.process in ['map']:
             if not args.is_online:
                 osm_file_processor = OSMFileProcessor(args.osm_file)
                 location = osm_file_processor.get_bounds_from_osm_file()
@@ -128,7 +128,7 @@ def main(args):
 
             # Dictionary with the location coordinates in EPSG:3857
             location_epsg_new = {"north": north_point_epsg_new_y, "south": south_point_epsg_new_y,
-                                 "east": east_point_epsg_new_x, "west": west_point_epsg_new_x}
+                                "east": east_point_epsg_new_x, "west": west_point_epsg_new_x}
             maps_module.create_georeferenced_map(
                 location_epsg_new,
                 args.epsg,
@@ -172,7 +172,8 @@ def main(args):
             # Go to the base directory
             os.chdir(args.base_directory)
             # Run the GRAL executable
-            subprocess.run(["dotnet", "run", "--project", args.gral_exe], check=True)
+            # subprocess.run(["dotnet", "run", "--project", args.gral_dll], check=True)
+            subprocess.run(["dotnet", args.gral_dll], check=True)
             # Rename the results files to make them more descriptive
             n_meteo_conditions = gral_module.get_number_of_weather_conditions()
             gral_module.rename_results(pollutant=pollutant, horizontal_layers=horizontal_layers, n_meteo_conditions=n_meteo_conditions)

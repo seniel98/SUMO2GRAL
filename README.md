@@ -43,13 +43,13 @@ Run the command line interface (CLI) script with the desired arguments to proces
 Offline mode (*default*):
 
 ```bash
-python cli.py --base-directory /path/to/base/directory --process all --osm-file /path/to/osm/file/file.osm  --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml 
+python cli.py --base-directory /path/to/base/directory --process all --osm-file /path/to/osm/file/file.osm  --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml --gral-dll /path/to/gral/dll/file/GRAL.dll
 ```
 
 Online mode (This is in case you want to retrieve the data using the osmnx library):
 
 ```bash
-python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --process all  --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml --online
+python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --process all  --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml --online --gral-dll /path/to/gral/dll/file/GRAL.dll
 ```
 
 ## Documentation
@@ -70,7 +70,7 @@ python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.
 - `--base-directory`: The base directory for the project.
 - `--north`, `--south`, `--east`, `--west`: The coordinates of the bounding box. (Default: None)
 - `--epsg`: The EPSG code for the coordinate system to reproject the map to. (Must be different than EPSG:4326. **This is because GRAL does not support EPSG:4326.**) (Default:EPSG:3857)
-- `--process`: Specify the process to run. Choices are: all, map, buildings, weather, highway, gral.
+- `--process`: Specify the process to run. Choices are: all, map, buildings, weather, highway, gral. (All does not include map, since the GRAL GUI is not used.)
 - `--online`: Specify if the data is to be retrieved using the osmnx library. (Default: False)
 - `--map-name`: The name of the map file to be saved.
 - `--buildings-shp-file`: The name of the shapefile to be saved.
@@ -81,7 +81,7 @@ python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.
 - `--weather-day`: The day of the weather data to extract, format (dd.mm.yyyy).
 - `--weather-hour`: The hour of the weather data to extract, format (hh:mm).
 - `--met-file`: The name of the met file. (Default: weather.met)
-- `--gral-exe`: The name of the GRAL executable. (Default: GRAL.exe)
+- `--gral-dll`: The name of the GRAL dll file. (Required for GRAL simulations)
 - `--osm-file`: The name of the OSM file.
 
 ### Examples
@@ -120,18 +120,18 @@ python cli.py --base-directory /path/to/base/directory  --process map --osm-file
     python cli.py --base-directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process highway --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml --osm-file /path/to/osm/file/file.osm
     ```
 
-- Generate the GRAL.exe inputs
+- Generate the GRAL inputs and execute the simulation:
 
   - Without inputting the osm file
 
     ```bash
-    python cli.py --base-directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process gral --met-file /path/to/met/file/metfile.met
+    python cli.py --base-directory /path/to/base/directory --north 39.50154 --south 39.4235 --east -0.30981 --west -0.44166 --process gral --met-file /path/to/met/file/metfile.met --online --gral-dll /path/to/gral/dll/file/GRAL.dll
     ```
   
   - Inputting the osm file
 
     ```bash
-    python cli.py --base-directory /path/to/base/directory --process gral --met-file /path/to/met/file/metfile.met --osm-file /path/to/osm/file/file.osm
+    python cli.py --base-directory /path/to/base/directory --process gral --met-file /path/to/met/file/metfile.met --osm-file /path/to/osm/file/file.osm --gral-dll /path/to/gral/dll/file/GRAL.dll
     ```
 
 ## GRAL Module Documentation

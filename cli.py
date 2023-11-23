@@ -49,8 +49,8 @@ def run_cli():
                             help="The hour of the weather data to extract, format (hh:mm)", dest="weather_hour", default=None)
         parser.add_argument("--met-file", type=str, default="weather.met", help="The name of the met file.",
                             dest="met_file")
-        parser.add_argument("--gral-exe", type=str, default="GRAL.exe",
-                            help="The name of the GRAL executable.", dest="gral_exe")
+        parser.add_argument("--gral-dll", type=str,required=True,
+                            help="The name of the GRAL executable.", dest="gral_dll")
         parser.add_argument("--osm-file", type=str, default=None,
                             help="The name of the OSM file.", dest="osm_file")
         parser.add_argument("--online", default=False, action="store_true",
