@@ -183,8 +183,8 @@ class NetFileProcessor:
         location = {}
        
         xmin,ymin,xmax,ymax = self.sumo_net.getBoundary()
-        east, south = self.sumo_net.convertXY2LonLat(xmin, ymin)
-        west, north = self.sumo_net.convertXY2LonLat(xmax, ymax)
+        west, south = self.sumo_net.convertXY2LonLat(xmin, ymin)
+        east, north = self.sumo_net.convertXY2LonLat(xmax, ymax)
         location['north'] = north
         location['south'] = south
         location['east'] = east
