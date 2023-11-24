@@ -56,7 +56,7 @@ class GRAL:
         Returns:
             None
         """
-        greb_file_path = f'{self.base_directory}/gral.geb'
+        greb_file_path = f'{self.base_directory}/GRAL.geb'
 
         x_cell_size = 10
         y_cell_size = 10

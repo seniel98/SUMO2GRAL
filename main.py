@@ -169,11 +169,9 @@ def main(args):
         gral_module.create_line_emissions_file(pollutant=pollutant, is_online=args.is_online)
         # Create the other optional files
         gral_module.create_other_optional_files()
-        # Go to the base directory
-        os.chdir(args.base_directory)
         # Run the GRAL executable
         # subprocess.run(["dotnet", "run", "--project", args.gral_dll], check=True)
-        subprocess.run(["dotnet", args.gral_dll], check=True)
+        subprocess.run(["dotnet", os.path.abspath(args.gral_dll)], check=True, cwd=args.base_directory)
         # Rename the results files to make them more descriptive
         n_meteo_conditions = gral_module.get_number_of_weather_conditions()
         gral_module.rename_results(pollutant=pollutant, horizontal_layers=horizontal_layers, n_meteo_conditions=n_meteo_conditions)
