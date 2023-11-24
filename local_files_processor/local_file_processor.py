@@ -7,6 +7,7 @@ import pandas as pd
 from tqdm import tqdm
 import sumolib as sumo
 from shapely.geometry import Point, LineString
+import warnings
 
 # Path: local_files_processor/local_file_processor.py
 
@@ -50,7 +51,7 @@ class OSMFileProcessor:
         if type == 'buildings':
             handler = BuildingHandler()
         else:
-            raise Exception("Invalid type")
+            raise Exception(f"Invalid type. The type must be buildings, and is {type}")
         handler.apply_file(self.osm_file)
         df = pd.DataFrame(handler.data)
         gdf = gpd.GeoDataFrame(df, geometry='geometry', crs='EPSG:4326')
@@ -68,35 +69,27 @@ class OSMFileProcessor:
         """
         os.system(f"osmium cat -o {pbf_file} {self.osm_file}")
 
-    def get_bounds_from_osm_file(self):
-        """
-        Get the bounds from the OSM file
-
-        Returns:
-            location (dict): The dict of the location bounds
-        """
-        location = {}
-        try:
-            box = osmium.io.Reader(self.osm_file).header().box()
-            bottom_left = box.bottom_left
-            top_right = box.top_right
-            location['north'] = top_right.lat
-            location['south'] = bottom_left.lat
-            location['east'] = top_right.lon
-            location['west'] = bottom_left.lon
-            return location
-        except Exception as e:
-            print(f"An error occurred: {e}")
-
 
 class BuildingHandler(osmium.SimpleHandler):
 
     def __init__(self):
+        """
+        Initialize the BuildingHandler class
+        """
         osmium.SimpleHandler.__init__(self)
         self.data = []
         self.wkbfab = osmium.geom.WKBFactory()
 
     def area(self, a):
+        """
+        Get the area of the building
+
+        Args:
+            a (osmium.osm.Area): The OSM area object
+
+        Returns:
+            None
+        """
         try:
             if 'building' in a.tags:
                 wkbshape = self.wkbfab.create_multipolygon(a)
@@ -110,8 +103,8 @@ class BuildingHandler(osmium.SimpleHandler):
                     'element_type': 'area',
                     'osmid': a.id
                 })
-        except Exception as e:
-            print(f"An error occurred: {e}")
+        except RuntimeError as e:
+            warnings.warn(f"Warning {e}")
 
 
 class NetFileProcessor:
@@ -179,4 +172,23 @@ class NetFileProcessor:
             points.append(Point(lon, lat))
         geometry = LineString(points)
         return geometry
+    
+    def get_bounds_from_net_file(self):
+        """
+        Get the bounds from the net file
+
+        Returns:
+            location (dict): The dict of the location bounds
+        """
+        location = {}
+       
+        xmin,ymin,xmax,ymax = self.sumo_net.getBoundary()
+        east, south = self.sumo_net.convertXY2LonLat(xmin, ymin)
+        west, north = self.sumo_net.convertXY2LonLat(xmax, ymax)
+        location['north'] = north
+        location['south'] = south
+        location['east'] = east
+        location['west'] = west
+        return location
+        
     

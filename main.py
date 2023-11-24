@@ -6,7 +6,7 @@ from maps.maps_processor import MapGenerator as Maps
 from gral.gral_processor import GRAL
 import osmnx as ox
 import sumolib as sumo
-from local_files_processor.local_file_processor import OSMFileProcessor
+from local_files_processor.local_file_processor import OSMFileProcessor, NetFileProcessor
 import subprocess
 
 
@@ -57,6 +57,9 @@ def main(args):
         maps_module = Maps(args.base_directory)
         gral_module = GRAL(args.base_directory, args.met_file,
                            args.buildings_shapefile_filename, args.highways_shapefile_filename)
+        
+        # Read the SUMO network file
+        net_file = sumo.net.readNet(f'{args.net_file}')
 
         # Process based on the specified argument
         if args.process in ['all','buildings']:
@@ -98,9 +101,6 @@ def main(args):
 
         if args.process in ['all', 'highways']:
 
-            # Read the SUMO network file
-            net_file = sumo.net.readNet(f'{args.net_file}')
-
             highway_gdf = highways_module.process_highway_data(args.is_online, net_file, args.osm_file)
             
             # Read the SUMO emissions file
@@ -118,8 +118,8 @@ def main(args):
 
         if args.process in ['map']:
             if not args.is_online:
-                osm_file_processor = OSMFileProcessor(args.osm_file)
-                location = osm_file_processor.get_bounds_from_osm_file()
+                net_file_processor = NetFileProcessor(net_file)
+                location = net_file_processor.get_bounds_from_net_file()
             # Convert the coordinates to EPSG
             west_point_epsg_new_x, north_point_epsg_new_y = maps_module.convert_coordinates(
                 location["west"], location["north"], 4326, args.epsg)
@@ -136,8 +136,8 @@ def main(args):
             )
         if args.process in ['all', 'gral']:
             if args.north is None or args.south is None or args.east is None or args.west is None:
-                osm_file_processor = OSMFileProcessor(args.osm_file)
-                location = osm_file_processor.get_bounds_from_osm_file()
+                net_file_processor = NetFileProcessor(net_file)
+                location = net_file_processor.get_bounds_from_net_file()
             
             # Generate the files for GRAL executable
             # Convert the coordinates to EPSG
@@ -179,7 +179,7 @@ def main(args):
             gral_module.rename_results(pollutant=pollutant, horizontal_layers=horizontal_layers, n_meteo_conditions=n_meteo_conditions)
            
     except Exception as e:
-        print(f"An error occurred: {e}")
+        raise Exception(f"An error occurred: {e}")
 
 
 if __name__ == "__main__":

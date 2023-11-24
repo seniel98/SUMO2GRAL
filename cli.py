@@ -35,9 +35,9 @@ def run_cli():
                             help="The name of the shapefile to be saved.", dest="buildings_shapefile_filename")
         parser.add_argument("--highways-shp-file", type=str, default="highways.shp", help="The name of the shapefile to be saved.",
                             dest="highways_shapefile_filename")
-        parser.add_argument("--net-file", type=str, default="net.net.xml", help="The name of the SUMO network file.",
+        parser.add_argument("--net-file", type=str, required=True, default="net.net.xml", help="The name of the SUMO network file.",
                             dest="net_file")
-        parser.add_argument("--emissions-file", type=str, default="emissions.xml",
+        parser.add_argument("--emissions-file", type=str, required=True , default="emissions.xml",
                             help="The name of the SUMO emissions file.", dest="emissions_file")
         parser.add_argument("--weather-file", type=str,
                             help="The name of the weather data file.", dest="weather_file")
@@ -61,7 +61,7 @@ def run_cli():
         main(args)
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        raise Exception(f"An error occurred: {e}")
 
 
 if __name__ == "__main__":

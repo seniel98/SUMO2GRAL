@@ -45,9 +45,7 @@ class WeatherDataProcessor:
             raise FileNotFoundError(
                 f"The file {file_name} could not be found in {self.base_directory}")
         except Exception as e:
-            print(f"An error occurred: {e}")
-            
-        return None
+            raise Exception(f"An error occurred retrieving weather data. Error: {e}")
 
     @staticmethod
     def change_comma_to_dot(df: pd.DataFrame) -> pd.DataFrame:
