@@ -53,6 +53,12 @@ def run_cli():
                         help="The name of the GRAL executable.", dest="gral_dll")
     parser.add_argument("--osm-file", type=str, default=None,
                         help="The name of the OSM file.", dest="osm_file")
+    parser.add_argument("--pollutant", type=str, default="NOx",
+                        help="The pollutant to be simulated.", dest="pollutant")
+    parser.add_argument("--hor-layers", type=list, default=[3, 6, 9],
+                        help="The horizontal layers to be simulated (m.).", dest="hor_layers")
+    parser.add_argument("--particles-ps", type=int, default=100, help="The number of particles per second.", dest="particles_ps")
+    parser.add_argument("--dispertion-time", type=int, default=3600, help="The dispertion time (s.).", dest="dispertion_time")
     parser.add_argument("--online", default=False, action="store_true",
                         help="The program by default executes the offline mode. If you dont provide any osm or net files it is recommended to use online", dest="is_online")
 

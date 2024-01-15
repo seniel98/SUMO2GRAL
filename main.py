@@ -150,15 +150,15 @@ def main(args):
         location_epsg_new = {"north": north_point_epsg_new_y, "south": south_point_epsg_new_y,
                                 "east": east_point_epsg_new_x, "west": west_point_epsg_new_x}
         
-        # Define the pollutant
-        pollutant = "PM10"
+        # Define the pollutant to simulate
+        pollutant = gral_module.check_pollutant(args.pollutant)
         # Define horizontal layers to simulate in meters
-        horizontal_layers = [3,6,9]
+        horizontal_layers = gral_module.check_horizontal_layers(args.hor_layers)
         # Create the GREB file
         gral_module.create_greb_file(bbox=location_epsg_new, horizontal_slices=len(horizontal_layers))
         # Create the in.dat file
         mean_latitude = (location["north"] + location["south"]) / 2
-        gral_module.create_in_dat_file(particles_ps=100, dispertion_time=3600, latitude=mean_latitude, horizontal_slices=horizontal_layers)
+        gral_module.create_in_dat_file(particles_ps=args.particles_ps, dispertion_time=args.dispertion_time, latitude=mean_latitude, horizontal_slices=horizontal_layers)
         # Create the meteoptg.all file
         gral_module.create_meteopgt_file()
         # Create the other required files

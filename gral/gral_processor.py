@@ -427,7 +427,42 @@ class GRAL:
             else:
                 os.rename(f'{self.base_directory}/00001-101.txt', f'{self.base_directory}/results_weather_{1}_{pollutant}_{horizontal_layers[0]}m.txt')
     ################################
+    @staticmethod
+    def check_pollutant(pollutant) -> str:
+        """
+        Checks if the pollutant is valid.
 
+        Args:
+            pollutant (str): The name of the pollutant.
+
+        Returns:
+            str: The name of the pollutant.
+        """
+        if pollutant not in ["NOx", "PM10", "PM2.5", "SO2"]:
+            raise Exception(
+                "The pollutant is not valid. Valid pollutants are: NOx, PM10, PM2.5", "SO2")
+        else:
+            return pollutant
+
+    @staticmethod
+    def check_horizontal_layers(horizontal_layers) -> list:
+        """
+        Checks if the horizontal layers are valid.
+
+        Args:
+            horizontal_layers (list): List of horizontal slices.
+
+        Returns:
+            list: List of horizontal slices.
+        """
+        if not isinstance(horizontal_layers, list):
+            raise Exception(
+                "The horizontal layers must be a list of integers.")
+        else:
+            # Remove all the elements that are not integers or numbers in the form of strings
+            horizontal_layers = [x for x in horizontal_layers if isinstance(
+                x, int) or isinstance(x, float) or x.isdigit()]
+            return horizontal_layers
 
 def convert_g_to_kg(g) -> float:
     return g / 1000
