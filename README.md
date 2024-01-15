@@ -9,6 +9,17 @@ S2G is a project aimed at simplifying the process of estimating pollutant concen
 - **Shapefile Generation**: Generates shapefiles for buildings and highways which are essential for GRAL simulations.
 - **Weather Data Processing**: Processes weather data to match the requirements of GRAL simulations.
 - **GRAL Files Generation**: Automates the creation of required GRAL simulation files through a dedicated module.
+- **GRAL Simulation**: Executes the GRAL simulation and outputs the reuslts in a .txt file.
+
+## Prerequisites
+
+You must have installed the Dotnet 6.0 SDK installed. Please visit [Windows .NET 6.0 downloading page](https://dotnet.microsoft.com/en-us/download/dotnet/6.0). 
+
+If you are a Linux user you can simply do:
+
+```bash
+sudo apt-get install -y dotnet-sdk-6.0
+```
 
 ## Dependencies
 
@@ -82,6 +93,10 @@ python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.
 - `--weather-hour`: The hour of the weather data to extract, format (hh:mm).
 - `--met-file`: The name of the met file. (Default: weather.met)
 - `--gral-dll`: The name of the GRAL dll file. (Required for GRAL simulations)
+- `--pollutant`: The pollutant to be simulated. (Default: NOx)
+- `--hor-layers`: The horizontal layers to be simulated (m.). (Default: 3,6,9)
+- `--particles-ps`: The number of particles per second. (Default: 100)
+- `--dispertion-time`: The dispertion time (s.). (Default: 3600)
 - `--osm-file`: The name of the OSM file.
 
 ### Examples
@@ -164,6 +179,8 @@ class GRAL:
         create_other_optional_files(): Creates the other optional files with predefined values.
         get_number_of_weather_conditions(): Gets the number of weather conditions.
         rename_results(pollutant, horizontal_layers, n_meteo_conditions): Rename the results files.
+        check_pollutant(pollutant): Checks if the pollutant is valid.
+        check_horizontal_layers(horizontal_layers): Checks if the horizontal layers are valid.
     """
     ...
 

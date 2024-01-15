@@ -27,6 +27,8 @@ class GRAL:
         create_other_optional_files(): Creates the other optional files with predefined values.
         get_number_of_weather_conditions(): Gets the number of weather conditions.
         rename_results(pollutant, horizontal_layers, n_meteo_conditions): Rename the results files.
+        check_pollutant(pollutant): Checks if the pollutant is valid.
+        check_horizontal_layers(horizontal_layers): Checks if the horizontal layers are valid.
     """
 
     def __init__(self, base_directory, met_file, buildings_file, line_file):
