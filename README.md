@@ -13,7 +13,7 @@ S2G is a project aimed at simplifying the process of estimating pollutant concen
 
 ## Prerequisites
 
-You must have installed the Dotnet 6.0 SDK installed. Please visit [Windows .NET 6.0 downloading page](https://dotnet.microsoft.com/en-us/download/dotnet/6.0). 
+You must have installed the Dotnet 6.0 SDK installed. Please visit the [Windows .NET 6.0 downloading page](https://dotnet.microsoft.com/en-us/download/dotnet/6.0). 
 
 If you are a Linux user you can simply do:
 
@@ -53,9 +53,18 @@ Run the command line interface (CLI) script with the desired arguments to proces
 
 Offline mode (*default*):
 
-```bash
-python cli.py --base-directory /path/to/base/directory --process all --osm-file /path/to/osm/file/file.osm  --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml --gral-dll /path/to/gral/dll/file/GRAL.dll
-```
+- Parameters mode
+
+  ```bash
+  python cli.py --base-directory /path/to/base/directory --process all --osm-file /path/to/osm/file/file.osm  --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml --gral-dll /path/to/gral/dll/file/GRAL.dll
+  ```
+- Configuration file mode (here you can take a look at the structure of the [config file](/examples/configuration.sumo2gral.cfg))
+
+  ```bash
+  python cli.py -c configuration.sumo2gral.cfg --process all
+  ```
+
+
 
 Online mode (This is in case you want to retrieve the data using the osmnx library):
 
@@ -67,14 +76,14 @@ python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.
 
 ### Modules
 
-- `buildings/buildings_processor.py`: Processes building data to create shapefiles.
-- `weather/weather_processor.py`: Processes weather data to match the format required for GRAL simulations.
-- `line_emission_sources/highway_data_processor.py`: Processes highway data to create shapefiles and processes SUMO emissions files.
-- `maps/maps_processor.py`: Generates georeferenced maps based on the specified geographic bounds.
-- `gral/gral_processor.py`: Automates the creation of required GRAL simulation files.
-- `local_files_processor/local_file_processor.py`: Processes local files data to create shapefiles.
-- `main.py`: Orchestrates the data processing based on user inputs.
-- `cli.py`: Provides a command line interface for the project.
+- [`buildings/buildings_processor.py`](/buildings/buildings_processor.py): Processes building data to create shapefiles.
+- [`weather/weather_processor.py`](/weather/weather_processor.py): Processes weather data to match the format required for GRAL simulations.
+- [`line_emission_sources/highway_data_processor.py`](/line_emission_sources/highway_data_processor.py): Processes highway data to create shapefiles and processes SUMO emissions files.
+- [`maps/maps_processor.py`](/maps/maps_processor.py): Generates georeferenced maps based on the specified geographic bounds.
+- [`gral/gral_processor.py`](/gral/gral_processor.py): Automates the creation of required GRAL simulation files.
+- [`local_files_processor/local_file_processor.py`](/local_files_processor/local_file_processor.py): Processes local files data to create shapefiles.
+- [`main.py`](/main.py): Orchestrates the data processing based on user inputs.
+- [`cli.py`](/cli.py): Provides a command line interface for the project.
 
 ### CLI Arguments
 
@@ -151,7 +160,7 @@ python cli.py --base-directory /path/to/base/directory  --process map --osm-file
 
 ## GRAL Module Documentation
 
-The `GRAL` class within the `gral/gral_processor.py` module serves to automate the creation of required files for GRAL simulation based on user inputs and predefined values. Below is an outline of its structure and functionalities:
+The `GRAL` class within the [`gral/gral_processor.py`](/gral/gral_processor.py) module serves to automate the creation of required files for GRAL simulation based on user inputs and predefined values. Below is an outline of its structure and functionalities:
 
 ```python
 class GRAL:
