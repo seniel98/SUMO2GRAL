@@ -8,6 +8,7 @@ from tqdm import tqdm
 import sumolib as sumo
 from shapely.geometry import Point, LineString
 import warnings
+import xml.etree.ElementTree as ET
 
 # Path: local_files_processor/local_file_processor.py
 
@@ -192,3 +193,99 @@ class NetFileProcessor:
         return location
         
     
+class XMLFileProcessor():
+    """
+    Class to process the XML file
+
+    Attributes:
+        xml_file (str): The path to the XML file
+
+    Methods:
+        get_root: Process the XML file and return a DataFrame
+        get_input_from_xml: Get the input values from the XML file
+        get_output_from_xml: Get the output values from the XML file
+        get_gral_from_xml: Get the GRAL value froms the XML file
+    """
+
+    def __init__(self, xml_file):
+        """
+        Initialize the XMLFileProcessor class
+
+        Args:
+            xml_file (str): The path to the XML file
+        """
+
+        self.xml_file = xml_file
+
+    def get_root(self):
+        """
+        Process the XML file and return a DataFrame
+
+        Returns:
+            df (DataFrame): The DataFrame of the XML file
+        """
+        tree = ET.parse(self.xml_file)
+        root = tree.getroot()
+        return root
+
+    def get_input_from_xml(root_element):
+        
+        """
+        Get the input values from the XML file
+
+        Args:
+            root_element (Element): The root element of the XML file
+
+        Returns:
+            base_directory (str): The base directory for the project
+            net_file (str): The path to the SUMO network file
+            osm_file (str): The path to the OSM file
+            emissions_file (str): The path to the SUMO emissions file
+            met_file (str): The path to the met file
+            gral_dll (str): The path to the GRAL executable
+        """
+
+        input_elem = root_element.find('input')
+        base_directory = input_elem.find('base-directory').attrib['value']
+        net_file = input_elem.find('net-file').attrib['value']
+        osm_file = input_elem.find('osm-file').attrib['value']
+        emissions_file = input_elem.find('emissions-file').attrib['value']
+        met_file = input_elem.find('met-file').attrib['value']
+        gral_dll = input_elem.find('gral-dll').attrib['value']
+        return base_directory, net_file, osm_file, emissions_file, met_file, gral_dll
+
+    def get_output_from_xml(root_element):
+        """
+        Get the output values from the XML file
+
+        Args:
+            root_element (Element): The root element of the XML file
+        
+        Returns:
+            buildings_shp_file (str): The path to the buildings shapefile
+            highways_shp_file (str): The path to the highways shapefile
+        """
+        output_elem = root_element.find('output')
+        buildings_shp_file = output_elem.find('buildings-shp-file').attrib['value']
+        highways_shp_file = output_elem.find('highways-shp-file').attrib['value']
+        return buildings_shp_file, highways_shp_file
+
+    def get_gral_from_xml(root_element):
+        """
+        Get the GRAL values from the XML file
+
+        Args:
+            root_element (Element): The root element of the XML file
+        
+        Returns:
+            pollutant (str): The pollutant to be simulated
+            hor_layers (list): The list of the horizontal layers
+            particles_ps (int): The number of particles per second
+            dispertion_time (int): The dispertion time
+        """
+        gral_elem = root_element.find('gral')
+        pollutant = str(gral_elem.find('pollutant').attrib['value'])
+        hor_layers = list(gral_elem.find('hor-layers').attrib['value'])
+        particles_ps =int(gral_elem.find('particles-ps').attrib['value'])
+        dispertion_time = int(gral_elem.find('dispertion-time').attrib['value'])
+        return pollutant, hor_layers, particles_ps, dispertion_time

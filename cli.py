@@ -15,7 +15,7 @@ def run_cli():
         formatter_class=argparse.RawTextHelpFormatter
     )
 
-    parser.add_argument("--base-directory", required=True,
+    parser.add_argument("--base-directory", required=False,
                         help="The base directory for the project.", dest="base_directory")
     parser.add_argument("--north", type=float,
                         help="The northernmost latitude of the bounding box. Must be in EPSG:4326, and decimal degrees.", required=False, dest="north", default=None)
@@ -35,9 +35,9 @@ def run_cli():
                         help="The name of the shapefile to be saved.", dest="buildings_shapefile_filename")
     parser.add_argument("--highways-shp-file", type=str, default="highways.shp", help="The name of the shapefile to be saved.",
                         dest="highways_shapefile_filename")
-    parser.add_argument("--net-file", type=str, required=True, default="net.net.xml", help="The name of the SUMO network file.",
+    parser.add_argument("--net-file", type=str, required=False, default="net.net.xml", help="The name of the SUMO network file.",
                         dest="net_file")
-    parser.add_argument("--emissions-file", type=str, required=True , default="emissions.xml",
+    parser.add_argument("--emissions-file", type=str, required=False , default="emissions.xml",
                         help="The name of the SUMO emissions file.", dest="emissions_file")
     parser.add_argument("--weather-file", type=str,
                         help="The name of the weather data file.", dest="weather_file")
@@ -49,7 +49,7 @@ def run_cli():
                         help="The hour of the weather data to extract, format (hh:mm)", dest="weather_hour", default=None)
     parser.add_argument("--met-file", type=str, default="weather.met", help="The name of the met file.",
                         dest="met_file")
-    parser.add_argument("--gral-dll", type=str,required=True,
+    parser.add_argument("--gral-dll", type=str,required=False,
                         help="The name of the GRAL executable.", dest="gral_dll")
     parser.add_argument("--osm-file", type=str, default=None,
                         help="The name of the OSM file.", dest="osm_file")
@@ -61,7 +61,7 @@ def run_cli():
     parser.add_argument("--dispertion-time", type=int, default=3600, help="The dispertion time (s.).", dest="dispertion_time")
     parser.add_argument("--online", default=False, action="store_true",
                         help="The program by default executes the offline mode. If you dont provide any osm or net files it is recommended to use online", dest="is_online")
-
+    parser.add_argument("-c", "--config" ,default=False, help="Use the configuration file", dest="config")
     args = parser.parse_args()
 
     main(args)
