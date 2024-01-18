@@ -13,12 +13,12 @@ S2G is a project aimed at simplifying the process of estimating pollutant concen
 
 ## Prerequisites
 
-You must have installed the Dotnet 6.0 SDK installed. Please visit the [Windows .NET 6.0 downloading page](https://dotnet.microsoft.com/en-us/download/dotnet/6.0). 
+You must have installed the Dotnet >= 6.0 SDK installed. Please visit the [Windows .NET 8.0 downloading page](https://dotnet.microsoft.com/en-us/download/dotnet/8.0). 
 
 If you are a Linux user you can simply do:
 
 ```bash
-sudo apt-get install -y dotnet-sdk-6.0
+sudo apt-get install -y dotnet-sdk-8.0
 ```
 
 ## Dependencies
