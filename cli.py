@@ -59,6 +59,7 @@ def run_cli():
                         help="The horizontal layers to be simulated (m.).", dest="hor_layers")
     parser.add_argument("--particles-ps", type=int, default=100, help="The number of particles per second.", dest="particles_ps")
     parser.add_argument("--dispertion-time", type=int, default=3600, help="The dispertion time (s.).", dest="dispertion_time")
+    parser.add_argument("--n-cores", type=int, default=4, help="The number of cores of CPU used for the simulation", dest="n_cores")
     parser.add_argument("--online", default=False, action="store_true",
                         help="The program by default executes the offline mode. If you dont provide any osm or net files it is recommended to use online", dest="is_online")
     parser.add_argument("-c", "--config" ,default=False, help="Use the configuration file", dest="config")

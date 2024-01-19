@@ -106,6 +106,7 @@ python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.
 - `--hor-layers`: The horizontal layers to be simulated (m.). (Default: 3,6,9)
 - `--particles-ps`: The number of particles per second. (Default: 100)
 - `--dispertion-time`: The dispertion time (s.). (Default: 3600)
+- `--n-cores`: The number of CPU cores used for the simulation (Default: 4)
 - `--osm-file`: The name of the OSM file.
 
 ### Examples

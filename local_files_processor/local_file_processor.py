@@ -282,10 +282,12 @@ class XMLFileProcessor():
             hor_layers (list): The list of the horizontal layers
             particles_ps (int): The number of particles per second
             dispertion_time (int): The dispertion time
+            n_cores (int): The number of cores
         """
         gral_elem = root_element.find('gral')
         pollutant = str(gral_elem.find('pollutant').attrib['value'])
         hor_layers = list(gral_elem.find('hor-layers').attrib['value'])
         particles_ps =int(gral_elem.find('particles-ps').attrib['value'])
         dispertion_time = int(gral_elem.find('dispertion-time').attrib['value'])
-        return pollutant, hor_layers, particles_ps, dispertion_time
+        n_cores = int(gral_elem.find('n-cores').attrib['value'])
+        return pollutant, hor_layers, particles_ps, dispertion_time, n_cores

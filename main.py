@@ -48,7 +48,7 @@ def main(args):
         root = XMLFileProcessor(args.config).get_root()
         base_directory, net_file, osm_file, emissions_file, met_file, gral_dll = XMLFileProcessor.get_input_from_xml(root)
         buildings_shp_file, highways_shp_file = XMLFileProcessor.get_output_from_xml(root)
-        pollutant, hor_layers, particles_ps, dispertion_time = XMLFileProcessor.get_gral_from_xml(root)
+        pollutant, hor_layers, particles_ps, dispertion_time, n_cores = XMLFileProcessor.get_gral_from_xml(root)
 
         print(f'net-file: {net_file}')
         print(f'osm-file: {osm_file}')
@@ -61,6 +61,7 @@ def main(args):
         print(f'hor-layers: {hor_layers}')
         print(f'particles-ps: {particles_ps}')
         print(f'dispertion-time: {dispertion_time}')
+        print(f'n-cores: {n_cores}')
     else:
         base_directory = args.base_directory
         net_file = args.net_file
@@ -74,6 +75,7 @@ def main(args):
         hor_layers = args.hor_layers
         particles_ps = args.particles_ps
         dispertion_time = args.dispertion_time
+        n_cores = args.n_cores
 
     # Define location dictionary from args
     location = {
@@ -195,7 +197,7 @@ def main(args):
         # Create the meteoptg.all file
         gral_module.create_meteopgt_file()
         # Create the other required files
-        gral_module.create_other_txt_requiered_files(pollutant=pollutant, n_cores=4)
+        gral_module.create_other_txt_requiered_files(pollutant=pollutant, n_cores=n_cores)
         # Create the buildings file
         gral_module.create_buildings_file()
         # Create the line emission sources file
