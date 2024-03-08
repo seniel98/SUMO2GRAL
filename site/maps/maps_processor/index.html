@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Maps - SUMO2GRAL Docs</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Maps";
+        var mkdocs_page_input_path = "maps/maps_processor.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/bash.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> SUMO2GRAL Docs
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../prerequisites/">Pre-requisites</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project-structure/">Project Structure</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../usage/">Usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../contributing/">Contributing</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Modules</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../buildings/buildings_processor/">Buildings</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../weather/weather_processor/">Weather</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../line_emission_sources/highway_data_processor.md">Line Emission Sources</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Maps</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-features">Key Features</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#example-command">Example Command</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#output">Output</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#customization">Customization</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#integration-with-gral">Integration with GRAL</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../gral/gral_processor/">GRAL</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../local_files_processor/local_file_processor/">Local Files Processor</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">SUMO2GRAL Docs</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Modules</li>
+      <li class="breadcrumb-item active">Maps</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="maps-processor-module">Maps Processor Module</h1>
+<p>The <code>maps_processor.py</code> module within the SUMO2GRAL toolkit is designed to generate detailed georeferenced maps that serve as a foundational layer for GRAL simulations. These maps incorporate various urban features and provide a spatial context for air quality modeling.</p>
+<h2 id="overview">Overview</h2>
+<p>Creating accurate air quality models in urban environments necessitates a comprehensive understanding of the urban layout. The Maps Processor module facilitates this by creating detailed maps from geographic data, which can then be used within the GRAL framework to simulate pollutant dispersion across the cityscape.</p>
+<h2 id="key-features">Key Features</h2>
+<ul>
+<li><strong>Georeferenced Map Creation</strong>: Produces detailed maps based on geographic coordinates, ensuring that the simulation area is accurately represented in the GRAL model.</li>
+<li><strong>Integration with Geographic Data Sources</strong>: Pulls data from OpenStreetMap or local GIS databases to create maps that reflect the current urban infrastructure.</li>
+<li><strong>Customizable Detail Level</strong>: Allows users to specify the level of detail for the generated maps, accommodating a range of simulation scales from neighborhood to city-wide models.</li>
+<li><strong>Support for Various Map Layers</strong>: Enables the inclusion of multiple layers in the generated maps, such as roads, buildings, vegetation, and water bodies, to provide a comprehensive environmental context for dispersion modeling.</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<p>This module is typically utilized within the broader SUMO2GRAL processing workflow. It can be triggered via the command line interface to generate maps for specified geographic areas.</p>
+<h3 id="example-command">Example Command</h3>
+<pre><code class="language-bash">python cli.py --base-directory /path/to/base/directory --process map --north 39.49 --south 39.47 --east -0.37 --west -0.39
+</code></pre>
+<p>This command directs the Maps Processor to create a georeferenced map for the specified area, incorporating essential urban features relevant to air quality modeling.</p>
+<h2 id="output">Output</h2>
+<p>The primary output of this module is a high-resolution georeferenced map, typically in PNG format, accompanied by a world file (PGW) for spatial referencing. This map can be directly imported into GRAL as a background layer, aiding in the visualization and setup of the simulation domain.</p>
+<h2 id="customization">Customization</h2>
+<p>Users have the flexibility to tailor the map generation process by adjusting parameters such as the map's scale, resolution, and included layers. This customization capability ensures that the generated maps meet the specific needs of each GRAL simulation.</p>
+<h2 id="integration-with-gral">Integration with GRAL</h2>
+<p>The georeferenced maps produced by this module are instrumental in setting up GRAL simulations. They provide a visual and spatial reference that aids in the accurate placement of emission sources, receptors, and other simulation elements within the urban environment.</p>
+<h2 id="contributing">Contributing</h2>
+<p>Enhancements to the Maps Processor module can significantly improve its efficiency, user-friendliness, and compatibility with various geographic data formats. Contributions that introduce new features, optimize existing functionalities, or improve the module's integration with GRAL are highly encouraged. For more information on contributing, please refer to the <a href="contributing.md"><code>contributing.md</code></a> document.</p>
+<p>Future developments might include advanced GIS functionalities, real-time data integration, or automated updating mechanisms to ensure that the maps reflect the latest urban developments, further enhancing the module's utility for urban planning and environmental management.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../weather/weather_processor/" class="btn btn-neutral float-left" title="Weather"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../gral/gral_processor/" class="btn btn-neutral float-right" title="GRAL">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../../weather/weather_processor/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../gral/gral_processor/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

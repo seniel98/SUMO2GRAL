@@ -2,6 +2,5 @@ __pycache__
 /cache
 .ideasite/
 docs/
-site/
 mkdocs.yml
 .idea/

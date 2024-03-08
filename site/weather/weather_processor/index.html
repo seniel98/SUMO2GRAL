@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Weather - SUMO2GRAL Docs</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Weather";
+        var mkdocs_page_input_path = "weather/weather_processor.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/bash.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> SUMO2GRAL Docs
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../prerequisites/">Pre-requisites</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project-structure/">Project Structure</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../usage/">Usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../contributing/">Contributing</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Modules</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../buildings/buildings_processor/">Buildings</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Weather</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-features">Key Features</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#example-command">Example Command</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#output">Output</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#customization">Customization</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#integration-with-gral">Integration with GRAL</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../line_emission_sources/highway_data_processor.md">Line Emission Sources</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../maps/maps_processor/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../gral/gral_processor/">GRAL</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../local_files_processor/local_file_processor/">Local Files Processor</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">SUMO2GRAL Docs</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Modules</li>
+      <li class="breadcrumb-item active">Weather</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="weather-processor-module">Weather Processor Module</h1>
+<p>The <code>weather_processor.py</code> module is an essential component of the SUMO2GRAL toolset, designed to streamline the process of preparing meteorological data for GRAL simulations. This module processes weather data to ensure compatibility with GRAL's input requirements, facilitating accurate and efficient pollutant dispersion modeling in urban environments.</p>
+<h2 id="overview">Overview</h2>
+<p>Weather conditions significantly impact pollutant dispersion patterns. The Weather Processor module extracts and formats relevant meteorological data, such as wind speed, wind direction, and atmospheric stability classes, from various sources to create input files suitable for GRAL simulations.</p>
+<h2 id="key-features">Key Features</h2>
+<ul>
+<li><strong>Data Compatibility</strong>: Converts weather data into a format recognized by GRAL, ensuring seamless integration into the simulation workflow.</li>
+<li><strong>Custom Data Handling</strong>: Supports processing of weather data from diverse sources, including local files and standardized meteorological datasets.</li>
+<li><strong>Parameter Extraction</strong>: Extracts key meteorological parameters necessary for dispersion modeling, including wind speed, wind direction, and stability classes.</li>
+<li><strong>File Generation</strong>: Produces <code>.met</code> files that serve as direct input for GRAL, containing processed and formatted weather data.</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<p>The Weather Processor is invoked automatically when the SUMO2GRAL framework processes weather data. Users can specify the source of the weather data and any relevant parameters through the command-line interface provided by <code>cli.py</code>.</p>
+<h3 id="example-command">Example Command</h3>
+<pre><code class="language-bash">python cli.py --base-directory /path/to/base/directory --process weather --weather-file /path/to/weather/data.csv
+</code></pre>
+<p>This command processes the specified weather data file, adapting it for use in GRAL simulations and generating the necessary <code>.met</code> files in the designated base directory.</p>
+<h2 id="output">Output</h2>
+<p>The primary output of the Weather Processor module is one or more <code>.met</code> files, each containing formatted meteorological data ready for ingestion by GRAL. These files include information on wind speed, wind direction, and other relevant atmospheric conditions for each time step of the simulation.</p>
+<h2 id="customization">Customization</h2>
+<p>Users can customize the weather data processing to suit specific needs, such as adjusting for local climatic conditions or focusing on particular atmospheric parameters. Modifications can be made directly within the module's code or through command-line arguments that alter the processing behavior.</p>
+<h2 id="integration-with-gral">Integration with GRAL</h2>
+<p>The formatted <code>.met</code> files produced by the Weather Processor are essential inputs for GRAL simulations. They provide the atmospheric boundary conditions that GRAL uses to model pollutant dispersion, making accurate weather data processing critical for reliable simulation outcomes.</p>
+<h2 id="contributing">Contributing</h2>
+<p>Enhancements, bug fixes, and improvements to the Weather Processor module are welcomed. Contributions that increase the module's flexibility, accuracy, or usability can significantly benefit the SUMO2GRAL user community. For contribution guidelines, please refer to the <a href="contributing.md"><code>contributing.md</code></a> document.</p>
+<p>Contributions can include adding support for additional weather data formats, improving data accuracy through advanced processing techniques, or enhancing the user interface for easier module customization.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../buildings/buildings_processor/" class="btn btn-neutral float-left" title="Buildings"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../maps/maps_processor/" class="btn btn-neutral float-right" title="Maps">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../../buildings/buildings_processor/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../maps/maps_processor/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
