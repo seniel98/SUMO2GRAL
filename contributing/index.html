@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Contributing - SUMO2GRAL Docs</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Contributing";
+        var mkdocs_page_input_path = "contributing.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/bash.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> SUMO2GRAL Docs
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../prerequisites/">Pre-requisites</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../project-structure/">Project Structure</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Contributing</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#ways-to-contribute">Ways to Contribute</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#review-process">Review Process</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#code-of-conduct">Code of Conduct</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#questions">Questions?</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Modules</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../buildings/buildings_processor/">Buildings</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../weather/weather_processor/">Weather</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../line_emission_sources/highway_data_processor.md">Line Emission Sources</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../maps/maps_processor/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../gral/gral_processor/">GRAL</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../local_files_processor/local_file_processor/">Local Files Processor</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">SUMO2GRAL Docs</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Contributing</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="contributing-to-sumo2gral">Contributing to SUMO2GRAL</h1>
+<p>We warmly welcome contributions from the community to the SUMO2GRAL project! Whether it's improving the code, fixing bugs, or enhancing documentation, your help can make a significant difference.</p>
+<h2 id="ways-to-contribute">Ways to Contribute</h2>
+<ol>
+<li>
+<p><strong>Reporting Bugs</strong>: If you find a bug in the software, please report it through the GitHub issue tracker. Be sure to include detailed information about the bug and steps to reproduce it.</p>
+</li>
+<li>
+<p><strong>Suggesting Enhancements</strong>: Have ideas on how to make SUMO2GRAL better? We'd love to hear your suggestions! Please submit them as "Feature Request" issues on GitHub.</p>
+</li>
+<li>
+<p><strong>Documentation</strong>: Good documentation is just as important as good code. If you spot errors, omissions, or areas that could use clearer explanations, please propose your changes or write to us.</p>
+</li>
+<li>
+<p><strong>Code Contributions</strong>: If you're interested in fixing issues or adding new features, follow the steps below to get started.</p>
+</li>
+</ol>
+<h2 id="getting-started">Getting Started</h2>
+<ol>
+<li>
+<p><strong>Fork the Repository</strong>: Start by forking the SUMO2GRAL repository to your GitHub account.</p>
+</li>
+<li>
+<p><strong>Clone Your Fork</strong>: Clone your fork to your local machine to start making changes:</p>
+<p><code>bash
+git clone https://github.com/your-username/SUMO2GRAL.git
+cd SUMO2GRAL</code></p>
+</li>
+<li>
+<p><strong>Create a New Branch</strong>: It's best to create a new branch for your changes:</p>
+<p><code>bash
+git checkout -b your-feature-branch-name</code></p>
+</li>
+<li>
+<p><strong>Make Your Changes</strong>: Implement your fix or feature, adhering to the project's coding standards.</p>
+</li>
+<li>
+<p><strong>Test Your Changes</strong>: Ensure your changes don't break existing functionality and, if possible, add new tests to cover your contributions.</p>
+</li>
+<li>
+<p><strong>Commit Your Changes</strong>: Write clear, concise commit messages that explain your changes:</p>
+<p><code>bash
+git commit -am 'Add some feature'</code></p>
+</li>
+<li>
+<p><strong>Push to Your Fork</strong>: Push your changes to your fork on GitHub:</p>
+<p><code>bash
+git push origin your-feature-branch-name</code></p>
+</li>
+<li>
+<p><strong>Submit a Pull Request</strong>: Go to the SUMO2GRAL repository on GitHub, and you'll see a prompt to submit a pull request. Fill in the details, explaining the purpose of your changes.</p>
+</li>
+</ol>
+<h2 id="review-process">Review Process</h2>
+<p>Once you submit a pull request, the project maintainers will review your changes. They may suggest modifications or ask for further details. This is a collaborative process, so feedback is not only welcomed but encouraged!</p>
+<h2 id="code-of-conduct">Code of Conduct</h2>
+<p>We expect all contributors to adhere to the <a href="https://www.contributor-covenant.org/version/2/0/code_of_conduct/">Contributor Covenant Code of Conduct</a>. Respectful and constructive interactions are the foundation of our community.</p>
+<h2 id="questions">Questions?</h2>
+<p>If you have any questions or need further guidance, feel free to reach out to the project maintainers or open an issue for general questions.</p>
+<p>Thank you for considering contributing to SUMO2GRAL. Your efforts help make this project better for everyone!</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../usage/" class="btn btn-neutral float-left" title="Usage"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../buildings/buildings_processor/" class="btn btn-neutral float-right" title="Buildings">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../usage/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../buildings/buildings_processor/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
