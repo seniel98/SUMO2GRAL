@@ -1,6 +1,17 @@
 # SUMO2GRAL (S2G) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-S2G is a project aimed at simplifying the process of estimating pollutant concentrations in urban areas by automating the preparation of necessary files for simulation in [GRAL (Graz Lagrangian Model)](https://gral.tugraz.at/). By providing geographic area specifications, [SUMO (Simulation of Urban MObility) emissions files](https://sumo.dlr.de/docs/Simulation/Output/Lane-_or_Edge-based_Emissions_Measures.html), and weather data for the desired area, users can effortlessly generate the required files for conducting GRAL simulations. The weather data format aligns with the format provided by the [monitor stations of Valencian Environmental Agency](https://mediambient.gva.es/es/web/calidad-ambiental/datos-on-line).
+S2G is a project aimed at simplifying the workflow of estimating pollutant concentrations in urban areas by automating the simulation process in [GRAL (Graz Lagrangian Model)](https://gral.tugraz.at/). By providing geographic area specifications or an Open Street Map (OSM) file, [SUMO (Simulation of Urban MObility) emissions files](https://sumo.dlr.de/docs/Simulation/Output/Lane-_or_Edge-based_Emissions_Measures.html), and weather data for the desired area, users can effortlessly perform GRAL simulations and obtain pollutant concentrations for the studied area. The weather data format aligns with the format provided by the [monitor stations of Valencian Environmental Agency](https://mediambient.gva.es/es/web/calidad-ambiental/datos-on-line).
+
+## Table of Contents
+
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Dependencies](#dependencies)
+- [Setup](#setup)
+- [Usage](#usage)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 

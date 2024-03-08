@@ -6,11 +6,11 @@ from main import main
 def run_cli():
 
     parser = argparse.ArgumentParser(
-        description="A tool to automate the process of retrieving necessary inputs for the GRAL program.",
+        description="A tool to simplify the workflow of estimating pollutant concentrations in urban areas by automating the simulation process in GRAL .",
         epilog="""
         Examples:
-        Retrieve only the map:
-        python cli.py --base_directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --epsg 3857 --process map
+        Run the entire process with the default configuration file:
+        python cli.py -c configuration.sumo2gral.cfg --process all
         """,
         formatter_class=argparse.RawTextHelpFormatter
     )
