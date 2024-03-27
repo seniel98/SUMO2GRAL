@@ -63,6 +63,9 @@ def run_cli():
     parser.add_argument("--online", default=False, action="store_true",
                         help="The program by default executes the offline mode. If you dont provide any osm or net files it is recommended to use online", dest="is_online")
     parser.add_argument("-c", "--config" ,default=False, help="Use the configuration file", dest="config")
+    parser.add_argument("--display-results", default=False, action="store_true", help="Display the results on a geopgrahic map", dest="display_results")
+    parser.add_argument("-r", "--results", default=False, help="The name of the results file", dest="results")
+    parser.add_argument("--mapbox-api-key", default=None, help="The mapbox api key", dest="mapbox_api_key")
     args = parser.parse_args()
 
     main(args)

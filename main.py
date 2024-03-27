@@ -4,6 +4,7 @@ from weather.weather_processor import WeatherDataProcessor as Weather
 from line_emission_sources.highway_data_processor import HighwayDataProcessor as Highways
 from maps.maps_processor import MapGenerator as Maps
 from gral.gral_processor import GRAL
+from display_results.results_processor import ResultsProcessor
 import osmnx as ox
 import sumolib as sumo
 from local_files_processor.local_file_processor import OSMFileProcessor, NetFileProcessor, XMLFileProcessor
@@ -210,6 +211,14 @@ def main(args):
         # Rename the results files to make them more descriptive
         n_meteo_conditions = gral_module.get_number_of_weather_conditions()
         gral_module.rename_results(pollutant=pollutant, horizontal_layers=horizontal_layers, n_meteo_conditions=n_meteo_conditions)
+
+    if args.display_results:
+        # Create the results processor
+        results_processor = ResultsProcessor()
+        if args.mapbox_api_key is None:
+            raise Exception("Please provide the mapbox api key")
+        else:
+            results_processor.process_results(args.results, args.mapbox_api_key, 'scattermapbox')
 
 
 if __name__ == "__main__":
