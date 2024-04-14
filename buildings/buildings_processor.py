@@ -1,4 +1,3 @@
-
 import numpy as np
 import osmnx as ox
 from geopandas import GeoDataFrame

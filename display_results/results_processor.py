@@ -107,7 +107,7 @@ class ResultsProcessor:
         data = np.array(data_values)
         return x, y, data
 
-    def convert_coordinates(x, y, src_crs, dst_crs):
+    def convert_coordinates(self, x, y, src_crs, dst_crs):
         """
         Convert x, y coordinates from src_crs to dst_crs using pyproj.
         
@@ -119,7 +119,6 @@ class ResultsProcessor:
         Returns:
         - x_out, y_out: Arrays of transformed x and y coordinates.
         """
-        
         transformer = pyproj.Transformer.from_crs("EPSG:{}".format(src_crs), "EPSG:{}".format(dst_crs), always_xy=True)
         x_out, y_out = transformer.transform(x, y)
         return x_out, y_out
@@ -139,16 +138,21 @@ class ResultsProcessor:
         px.set_mapbox_access_token(mapbox_api_key)
 
         if type == 'scattermapbox':
+            df['size'] = 1
             fig = px.scatter_mapbox(df, lat="lat", lon="lon", color="data",
-                                    color_continuous_scale='Temps', zoom=12, range_color=(min(df['data']), max(df['data'])), opacity=0.01)
+                                    color_continuous_scale='Temps', zoom=12, range_color=(min(df['data']), max(df['data'])), opacity=0.1, size='size')
+            return fig
         elif type == 'densitymapbox':
             fig = px.density_mapbox(df, lat='lat', lon='lon', z='data', radius=10, zoom=12.5,
                                     color_continuous_scale='Temps', range_color=(min(df['data']), max(df['data'])))
+            return fig
         else:
             raise Exception(f"Invalid type. The type must be scattermapbox or densitymapbox, and is {type}")
+        
+        return None
 
     
-    def process_results(self, results_file, mapbox_api_key, type, src_crs=4326, dst_crs=3857):
+    def process_results(self, results_file, mapbox_api_key, type, src_crs=3857, dst_crs=4326):
         """
         Process the results file
 
@@ -167,6 +171,7 @@ class ResultsProcessor:
         data_pollutant = self.extract_pollutant_data(lines, nodata)
         x, y, data = self.gather_coordinates_and_values(data_pollutant, ncols, nrows, xllcorner, yllcorner, cellsize)
         x, y = self.convert_coordinates(x, y, src_crs, dst_crs)
+
         df = pd.DataFrame({'lon': x, 'lat': y, 'data': data})
 
 
@@ -175,12 +180,16 @@ class ResultsProcessor:
         df = df[df['data'] != 0.0]
 
         # Reduce precision of coordinates
-        decimal_places = 5
+        decimal_places = 3
         df['lon'] = df['lon'].round(decimal_places)
         df['lat'] = df['lat'].round(decimal_places)
 
         # Aggregate data by coordinates
         df_aggregated = df.groupby(['lon', 'lat']).mean().reset_index()
 
+        print(df_aggregated)
+
         # Plot the results
-        self.graph_results(df_aggregated, mapbox_api_key, type=type)
+        fig = self.graph_results(df_aggregated, mapbox_api_key, type=type)
+        if fig is not None:
+            fig.show()

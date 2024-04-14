@@ -23,6 +23,7 @@ S2G is a project aimed at simplifying the workflow of estimating pollutant conce
 - **Weather Data Processing**: Processes weather data to match the requirements of GRAL simulations.
 - **GRAL Files Generation**: Automates the creation of required GRAL simulation files through a dedicated module.
 - **GRAL Simulation**: Executes the GRAL simulation and outputs the reuslts in a .txt file.
+- **Pollutant Concentration Analysis**: Provides a module for analyzing pollutant concentrations in the studied area.
 
 ## Prerequisites
 
@@ -83,6 +84,14 @@ Online mode (This is in case you want to retrieve the data using the osmnx libra
 ```bash
 python cli.py --base-directory /path/to/base/directory --north 39.49 --south 39.47 --east -0.37 --west -0.39 --process all  --net-file /path/to/net/file/file.net.xml --emissions-file /path/to/edge/emissions/file/edges-emissions-file.xml --online --gral-dll /path/to/gral/dll/file/GRAL.dll
 ```
+
+After the data processing is complete, you can display the pollutant concentrations in the studied area:
+
+```bash
+python cli.py --process results --display-geo-map -r /path/to/results/file/results.txt --mapbox-api-key your_mapbox_api_key
+```
+
+This command displays the pollutant concentration map using Mapbox. Replace `your_mapbox_api_key` with your API key (see how to [create your API KEY](https://docs.mapbox.com/help/getting-started/access-tokens/)).
 
 ## Documentation
 

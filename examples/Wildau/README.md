@@ -45,3 +45,18 @@ python cli.py -c wildau.sumo2gral.cfg --process all
 This command prepares all necessary GRAL files and executes the simulation. The output is a .txt file formatted as a matrix showing the pollutant concentration across the grid. [Here's an example output](results/results_weather_1_NOx_6m.txt).
 
 Output filenames follow the pattern: `[Weather situation]_[Pollutant]_[Layer height].txt`.
+
+## Displaying Results
+
+To visualize the pollutant concentration map, use the following command:
+
+```bash
+python cli.py --process results --display-geo-map -r results/results_weather_1_NOx_6m.txt --mapbox-api-key your_mapbox_api_key
+```
+
+This command displays the pollutant concentration map using Mapbox. Replace `your_mapbox_api_key` with your API key (see how to [create your API KEY](https://docs.mapbox.com/help/getting-started/access-tokens/)).
+
+### Example Output
+
+Results are displayed as a scattermapbox plot with pollutant concentration values. The following image shows the NOx concentration (ug/m3) map for Wildau, Germany.
+![Pollutant Concentration Map](results/WildauNOx.png)

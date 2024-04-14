@@ -27,7 +27,7 @@ def run_cli():
                         help="The westernmost longitude of the bounding box. Must be in EPSG:4326, and decimal degrees.", required=False, dest="west", default=None)
     parser.add_argument("--epsg", type=int,
                         help="The EPSG code for the coordinate system to reproject the map to, ie: 3857.", default=3857, dest="epsg")
-    parser.add_argument("--process", choices=["all", "map", "buildings", "weather", "highways", "gral"],
+    parser.add_argument("--process", choices=["all", "map", "buildings", "weather", "highways", "gral", "results"],
                         help="Specify the process to run. Choices are: all, map, buildings, weather, highway, gral", required=True,  dest="process")
     parser.add_argument("--map-name", type=str, default="basemap",
                         help="The name of the map file to be saved.", dest="map_filename")
@@ -63,7 +63,7 @@ def run_cli():
     parser.add_argument("--online", default=False, action="store_true",
                         help="The program by default executes the offline mode. If you dont provide any osm or net files it is recommended to use online", dest="is_online")
     parser.add_argument("-c", "--config" ,default=False, help="Use the configuration file", dest="config")
-    parser.add_argument("--display-results", default=False, action="store_true", help="Display the results on a geopgrahic map", dest="display_results")
+    parser.add_argument("--display-geo-map", default=False, action="store_true", help="Display the results on a geopgrahic map", dest="display_geo_map")
     parser.add_argument("-r", "--results", default=False, help="The name of the results file", dest="results")
     parser.add_argument("--mapbox-api-key", default=None, help="The mapbox api key", dest="mapbox_api_key")
     args = parser.parse_args()
