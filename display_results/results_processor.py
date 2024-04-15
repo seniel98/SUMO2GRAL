@@ -174,8 +174,6 @@ class ResultsProcessor:
 
         df = pd.DataFrame({'lon': x, 'lat': y, 'data': data})
 
-
-
         # # Remove all rows with data value 0
         df = df[df['data'] != 0.0]
 
@@ -186,8 +184,6 @@ class ResultsProcessor:
 
         # Aggregate data by coordinates
         df_aggregated = df.groupby(['lon', 'lat']).mean().reset_index()
-
-        print(df_aggregated)
 
         # Plot the results
         fig = self.graph_results(df_aggregated, mapbox_api_key, type=type)
