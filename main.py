@@ -1,4 +1,5 @@
 import os
+from parks.parks_processor import ParksProcessor as Parks
 from buildings.buildings_processor import BuildingProcessor as Buildings
 from weather.weather_processor import WeatherDataProcessor as Weather
 from line_emission_sources.highway_data_processor import HighwayDataProcessor as Highways
@@ -49,16 +50,18 @@ def main(args):
 
         if args.config:
             root = XMLFileProcessor(args.config).get_root()
-            base_directory, net_file, osm_file, emissions_file, met_file, gral_dll = XMLFileProcessor.get_input_from_xml(root)
-            buildings_shp_file, highways_shp_file = XMLFileProcessor.get_output_from_xml(root)
+            base_directory, net_file, osm_file, emissions_file, weather_file, met_file, gral_dll = XMLFileProcessor.get_input_from_xml(root)
+            buildings_shp_file, highways_shp_file, vegetation_shp_file = XMLFileProcessor.get_output_from_xml(root)
             pollutant, hor_layers, particles_ps, dispertion_time, n_cores = XMLFileProcessor.get_gral_from_xml(root)
 
             print(f'net-file: {net_file}')
             print(f'osm-file: {osm_file}')
             print(f'emissions-file: {emissions_file}')
+            print(f'weather-file: {weather_file}')
             print(f'met-file: {met_file}')
             print(f'gral-dll: {gral_dll}')
             print(f'buildings-shp-file: {buildings_shp_file}')
+            print(f'vegetation-shp-file: {vegetation_shp_file}')
             print(f'highways-shp-file: {highways_shp_file}')
             print(f'pollutant: {pollutant}')
             print(f'hor-layers: {hor_layers}')
@@ -70,10 +73,12 @@ def main(args):
             net_file = args.net_file
             osm_file = args.osm_file
             emissions_file = args.emissions_file
+            weather_file = args.weather_file
             met_file = args.met_file
             gral_dll = args.gral_dll
             buildings_shp_file = args.buildings_shapefile_filename
             highways_shp_file = args.highways_shapefile_filename
+            vegetation_shp_file = args.vegetation_shapefile_filename
             pollutant = args.pollutant
             hor_layers = args.hor_layers
             particles_ps = args.particles_ps
@@ -90,11 +95,12 @@ def main(args):
 
         # Create objects for each module
         buildings_module = Buildings(location)
+        parks_module = Parks(location)
         weather_module = Weather(base_directory)
         highways_module = Highways(location)
         maps_module = Maps(base_directory)
         gral_module = GRAL(base_directory, met_file,
-                            buildings_shp_file, highways_shp_file)
+                            buildings_shp_file, vegetation_shp_file, highways_shp_file)
         
         # Read the SUMO network file
         net_file = sumo.net.readNet(f'{net_file}')
@@ -108,9 +114,18 @@ def main(args):
                 base_directory,
                 buildings_shp_file
             )
+        
+        if args.process in ['all', 'vegetation']:
+            parks_gdf = parks_module.process_parks(args.is_online, osm_file)
+            create_shapefile(
+                parks_gdf,
+                f"EPSG:{args.epsg}",
+                base_directory,
+                "vegetation.shp"
+            )
 
         if args.process in ['all', 'weather']:
-            if args.weather_file is None:
+            if weather_file is None:
                 print("No weather file specified, creating default weather and met files...")
                 weather_df, met_file_df = weather_module.create_default_files()
                 weather_module.write_to_files(
@@ -118,7 +133,7 @@ def main(args):
                 weather_module.write_to_files(met_file_df, met_file)
             else:
                 weather_df, met_file_df = weather_module.process_weather_data(
-                    args.weather_file)
+                    weather_file)
                 weather_module.write_to_files(
                     weather_df, f'{args.output_weather_file}.csv', False)
                 weather_module.write_to_files(met_file_df, met_file)
@@ -203,6 +218,8 @@ def main(args):
             gral_module.create_other_txt_requiered_files(pollutant=pollutant, n_cores=n_cores)
             # Create the buildings file
             gral_module.create_buildings_file()
+            # Create the vegetation file
+            gral_module.create_vegetation_file()
             # Create the line emission sources file
             gral_module.create_line_emissions_file(pollutant=pollutant, is_online=args.is_online)
             # Create the other optional files

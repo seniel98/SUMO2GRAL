@@ -51,8 +51,10 @@ class OSMFileProcessor:
         """
         if type == 'buildings':
             handler = BuildingHandler()
+        elif type == 'parks':
+            handler = ParkHandler()
         else:
-            raise Exception(f"Invalid type. The type must be buildings, and is {type}")
+            raise Exception(f"Invalid type. The type must be buildings or parks, and is {type}")
         handler.apply_file(self.osm_file)
         df = pd.DataFrame(handler.data)
         gdf = gpd.GeoDataFrame(df, geometry='geometry', crs='EPSG:4326')
@@ -106,6 +108,41 @@ class BuildingHandler(osmium.SimpleHandler):
                 })
         except RuntimeError as e:
             warnings.warn(f"Warning {e}")
+
+class ParkHandler(osmium.SimpleHandler):
+
+    def __init__(self):
+        """
+        Initialize the BuildingHandler class
+        """
+        osmium.SimpleHandler.__init__(self)
+        self.data = []
+        self.wkbfab = osmium.geom.WKBFactory()
+
+    def area(self, a):
+        """
+        Get the area of the building
+
+        Args:
+            a (osmium.osm.Area): The OSM area object
+
+        Returns:
+            None
+        """
+        try:
+            # Check if the area is tagged as a park
+            if 'leisure' in a.tags and a.tags['leisure'] == 'park':
+                wkbshape = self.wkbfab.create_multipolygon(a)
+                shapely_geom = wkblib.loads(wkbshape, hex=True)
+                park_name = a.tags.get('name', 'None')
+                self.data.append({
+                    'geometry': shapely_geom,
+                    'name': park_name,
+                    'element_type': 'area',
+                    'osmid': a.id
+                })
+        except RuntimeError as e:
+            warnings.warn(f"Warning: {e}")
 
 
 class NetFileProcessor:
@@ -241,6 +278,7 @@ class XMLFileProcessor():
             net_file (str): The path to the SUMO network file
             osm_file (str): The path to the OSM file
             emissions_file (str): The path to the SUMO emissions file
+            weather_file (str): The path to the weather file
             met_file (str): The path to the met file
             gral_dll (str): The path to the GRAL executable
         """
@@ -250,9 +288,10 @@ class XMLFileProcessor():
         net_file = input_elem.find('net-file').attrib['value']
         osm_file = input_elem.find('osm-file').attrib['value']
         emissions_file = input_elem.find('emissions-file').attrib['value']
+        weather_file = input_elem.find('weather-file').attrib['value']
         met_file = input_elem.find('met-file').attrib['value']
         gral_dll = input_elem.find('gral-dll').attrib['value']
-        return base_directory, net_file, osm_file, emissions_file, met_file, gral_dll
+        return base_directory, net_file, osm_file, emissions_file, weather_file, met_file, gral_dll
 
     def get_output_from_xml(root_element):
         """
@@ -268,7 +307,8 @@ class XMLFileProcessor():
         output_elem = root_element.find('output')
         buildings_shp_file = output_elem.find('buildings-shp-file').attrib['value']
         highways_shp_file = output_elem.find('highways-shp-file').attrib['value']
-        return buildings_shp_file, highways_shp_file
+        vegetation_shp_file = output_elem.find('vegetation-shp-file').attrib['value']
+        return buildings_shp_file, highways_shp_file, vegetation_shp_file
 
     def get_gral_from_xml(root_element):
         """

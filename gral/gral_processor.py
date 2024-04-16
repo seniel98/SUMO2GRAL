@@ -10,6 +10,7 @@ class GRAL:
         base_directory (str): The base directory for the project.
         met_file (str): The name of the met file.
         buildings_file (str): The name of the buildings file.
+        vegetation_file (str): The name of the vegetation file.
         line_file (str): The name of the line file.
 
     Methods:
@@ -21,6 +22,7 @@ class GRAL:
         create_max_proc_file(n_cores): Creates a Max_Proc.txt file with predefined values.
         create_other_txt_requiered_files(pollutant, n_cores): Creates the other txt requiered files with predefined values.
         create_buildings_file(): Creates a buildings.dat file with predefined values.
+        create_vegetation_file(): Creates a vegetation.dat file with predefined values.
         create_line_emissions_file(pollutant): Creates a line.dat file with predefined values.
         create_met_time_series_data_file(meteo_file): Creates a mettimeseries.dat file with predefined values.
         create_dispersion_number_file(): Creates a DispNr.txt file with predefined values.
@@ -31,7 +33,7 @@ class GRAL:
         check_horizontal_layers(horizontal_layers): Checks if the horizontal layers are valid.
     """
 
-    def __init__(self, base_directory, met_file, buildings_file, line_file):
+    def __init__(self, base_directory, met_file, buildings_file, vegetation_file ,line_file):
         """
         Initializes the GRAL class.
 
@@ -39,11 +41,13 @@ class GRAL:
             base_directory (str): The base directory for the project.
             met_file (str): The name of the met file.
             buildings_file (str): The name of the buildings file.
+            vegetation_file (str): The name of the vegetation file.
             line_file (str): The name of the line file.
         """
         self.base_directory = base_directory
         self.met_file = met_file
         self.buildings_file = buildings_file
+        self.vegetation_file = vegetation_file
         self.line_file = line_file
 
     #############################
@@ -122,14 +126,14 @@ class GRAL:
             file.write(
                 "4 \t ! Meteorology input: inputzr.dat = 0, meteo.all = 1, elimaeki.prn = 2, SONIC.dat = 3, meteopgt.all = 4\n")
             file.write("0 \t ! Receptor points: Yes = 1, No = 0\n")
-            file.write("0.2 \t ! Surface roughness in [m]\n")
+            file.write("0.5 \t ! Surface roughness in [m]\n")
             file.write(f"{round(float(latitude),2)} \t ! Latitude\n")
             file.write("N \t ! Meandering Effect Off = J, On = N\n")
             file.write(
                 "NOx \t ! Pollutant: not used since version 19.01, new: Pollutant.txt\n")
             file.write(
                 f"{','.join([str(slice) for slice in horizontal_slices])}, \t ! Horizontal slices [m] seperated by a comma (number of slices need to be defined in GRAL.geb!)\n")
-            file.write("2 \t ! Vertical grid spacing in [m]\n")
+            file.write("1 \t ! Vertical grid spacing in [m]\n")
             file.write(
                 "1 \t ! Start the calculation with this weather number\n")
             file.write("2,15 \t ! How to take buildings into account? 1 = simple mass conservation, 2 = mass conservation with Poisson equation + advection, Factor for the prognostic sub domain size\n")
@@ -174,8 +178,8 @@ class GRAL:
                 content = content.split(",")
                 content.pop(0)
                 content.pop(0)
-                wind_speed.append(round(float(content[0]), 1))
-                wind_direction.append(int(content[1]))
+                wind_speed.append(round(float(content[1]), 1))
+                wind_direction.append(int(content[0]))
                 stability_class.append(int(content[2]))
 
             meteo_conditions["wind_direction"] = wind_direction
@@ -285,6 +289,38 @@ class GRAL:
                     f"{int(row['geometry'].centroid.x)},{int(row['geometry'].centroid.y)},0,{int(row['height'])}\n")
 
         print(f'buildings.dat file created at: {buildings_file_path}')
+
+    def create_vegetation_file(self) -> None:
+        """
+        Creates a vegetation.dat file with predefined values and writes the coordinates
+        of each point in the polygon or multipolygon geometries.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        print('Creating vegetation file...')
+        vegetation_gdf = gpd.read_file(f'{self.base_directory}/{self.vegetation_file}')
+        vegetation_file_path = f'{self.base_directory}/vegetation.dat'
+        with open(vegetation_file_path, 'w') as file:
+            for index, row in vegetation_gdf.iterrows():
+                # Write a line with fixed values
+                file.write("D \t15 \t7.5 \t0.1 \t1.25 \t50\n")
+                # Check if the geometry is a Polygon or MultiPolygon
+                geom = row['geometry']
+                if geom.type == 'Polygon':
+                    for x, y in geom.exterior.coords:
+                        file.write(f"{int(x)},{int(y)}\n")
+                elif geom.type == 'MultiPolygon':
+                    for poly in geom:
+                        for x, y in poly.exterior.coords:
+                            file.write(f"{int(x)},{int(y)}\n")
+                else:
+                    print(f"Unsupported geometry type: {geom.type}")
+
+        print(f'vegetation.dat file created at: {vegetation_file_path}')
 
     def create_line_emissions_file(self, pollutant, is_online=False) -> None:
         """
