@@ -31,6 +31,7 @@ class GRAL:
         rename_results(pollutant, horizontal_layers, n_meteo_conditions): Rename the results files.
         check_pollutant(pollutant): Checks if the pollutant is valid.
         check_horizontal_layers(horizontal_layers): Checks if the horizontal layers are valid.
+        calculate_emission_rate(error_pollutant, mg, edge_length, sim_time): Calculates the emission rate.
     """
 
     def __init__(self, base_directory, met_file, buildings_file, vegetation_file ,line_file):
@@ -125,8 +126,8 @@ class GRAL:
                 "1 \t ! Steady state GRAL mode = 1, Transient GRAL mode = 0\n")
             file.write(
                 "4 \t ! Meteorology input: inputzr.dat = 0, meteo.all = 1, elimaeki.prn = 2, SONIC.dat = 3, meteopgt.all = 4\n")
-            file.write("0 \t ! Receptor points: Yes = 1, No = 0\n")
-            file.write("0.5 \t ! Surface roughness in [m]\n")
+            file.write("0\t ! Receptor points: Yes = 1, No = 0\n")
+            file.write("0.25 \t ! Surface roughness in [m]\n")
             file.write(f"{round(float(latitude),2)} \t ! Latitude\n")
             file.write("N \t ! Meandering Effect Off = J, On = N\n")
             file.write(
@@ -229,7 +230,7 @@ class GRAL:
         print('Creating percent file...')
         percent_file_path = f'{self.base_directory}/Percent.txt'
         with open(percent_file_path, 'w') as file:
-            file.write("80")
+            file.write("100")
 
         print(f'Percent.txt file created at: {percent_file_path}')
 
@@ -335,8 +336,22 @@ class GRAL:
         """
         print('Creating line emissions file...')
         id= "osm_id"
+        mode = 0
+        dry_deposition_pm10 = 0
+        dry_deposition_pm_2_5 = 0
+        share_of_pm_10 = 0
+        share_of_pm_2_5 = 0
+        # Height of the city in meters above sea level
+        city_mean_height = -3
+        mean_pollutant_error = 19.73
         if pollutant == "PM10":
             pollutant = "PMx"
+            mode = 2
+            dry_deposition_pm10 = 0.032
+            dry_deposition_pm_2_5 = 0.0032
+            share_of_pm_10 = 100
+            share_of_pm_2_5 = 60
+            mean_pollutant_error = 23.37
         if not is_online:
             id = "edge_id"
         line_gdf = gpd.read_file(f'{self.base_directory}/{self.line_file}')
@@ -349,7 +364,8 @@ class GRAL:
                 f"StrName,Section,Sourcegroup,x1,y1,z1,x2,y2,z2,width,noiseabatementwall,Length[km],--,{pollutant}[kg/(km*h)],--,--,--,--,--,deposition data\n")
             for index, row in line_gdf.iterrows():
                 minx, miny, maxx, maxy = row['geometry'].bounds
-                file.write(f'{row[id]},1,1,{round(minx,1)},{round(miny,1)},0,{round(maxx,1)},{round(maxy,1)},0,{row["width"]},-3,0,0,{convert_g_to_kg(float(row[f"{pollutant}_normed"]))},0,0,0,0,0,0,0,0,0,0,0,0,0\n')
+                # file.write(f'{row[id]},1,1,{round(minx,1)},{round(miny,1)},0,{round(maxx,1)},{round(maxy,1)},0,{row["width"]},0,0,0,{calculate_emission_rate(float(row[f"{pollutant}_abs"]), float(row["length"]))},0,0,0,0,{share_of_pm_2_5},{share_of_pm_10},0,0,{dry_deposition_pm_2_5},{dry_deposition_pm10},0,{mode}\n')
+                file.write(f'{row[id]},1,1,{round(minx,1)},{round(miny,1)},0,{round(maxx,1)},{round(maxy,1)},0,{row["width"]},{city_mean_height},0,0,{self.calculate_emission_rate(mean_pollutant_error, float(row[f"{pollutant}_abs"]), float(row["length"]))},0,0,0,0,{share_of_pm_2_5},{share_of_pm_10},0,0,{dry_deposition_pm_2_5},{dry_deposition_pm10},0,{mode},0,0,0,0,0,0\n')
 
         print(f'line.dat file created at: {line_file_path}')
 
@@ -476,9 +492,9 @@ class GRAL:
         Returns:
             str: The name of the pollutant.
         """
-        if pollutant not in ["NOx", "PM10", "PM2.5", "SO2"]:
+        if pollutant not in ["NOx", "PM10", "PM2.5", "CO"]:
             raise Exception(
-                "The pollutant is not valid. Valid pollutants are: NOx, PM10, PM2.5", "SO2")
+                "The pollutant is not valid. Valid pollutants are: NOx, PM10, PM2.5", "CO")
         else:
             return pollutant
 
@@ -498,9 +514,31 @@ class GRAL:
                 "The horizontal layers must be a list of integers.")
         else:
             # Remove all the elements that are not integers or numbers in the form of strings
-            horizontal_layers = [x for x in horizontal_layers if isinstance(
-                x, int) or isinstance(x, float) or x.isdigit()]
+            print(horizontal_layers)
+            horizontal_layers = [eval(x) for x in horizontal_layers]
+            print(horizontal_layers)
             return horizontal_layers
+    
+    @staticmethod
+    def calculate_emission_rate(error_pollutant, mg, edge_length, sim_time=3600) -> float:
+        """
+        Calculates the emission rate.
 
-def convert_g_to_kg(g) -> float:
-    return g / 1000
+        Args:
+            error_pollutant (float): The error of the pollutant.
+            mg (float): The mass of the pollutant.
+            edge_length (float): The edge length.
+            sim_time (int): The simulation time.
+
+        Returns:
+            float: The emission rate.
+        """
+        mg = mg + mg * (error_pollutant/100)
+        # Convert mg to kg
+        kg = mg / 1000000
+        # Convert the edge length from meters to kilometers
+        km = edge_length / 1000
+        # Conert the simulation time from seconds to hours
+        sim_time = sim_time / 3600
+        # Calculate the emission rate in kg/h/km
+        return kg*km / sim_time

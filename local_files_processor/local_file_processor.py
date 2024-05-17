@@ -326,7 +326,8 @@ class XMLFileProcessor():
         """
         gral_elem = root_element.find('gral')
         pollutant = str(gral_elem.find('pollutant').attrib['value'])
-        hor_layers = list(gral_elem.find('hor-layers').attrib['value'])
+        hor_layers = str(gral_elem.find('hor-layers').attrib['value'])
+        hor_layers = hor_layers.split(',')
         particles_ps =int(gral_elem.find('particles-ps').attrib['value'])
         dispertion_time = int(gral_elem.find('dispertion-time').attrib['value'])
         n_cores = int(gral_elem.find('n-cores').attrib['value'])

@@ -21,6 +21,8 @@ class HighwayDataProcessor:
         generate_lanes_probability(highway_gdf: GeoDataFrame) -> np.ndarray: Generates the probability of each lane in a highway based on the number of lanes.
         insert_lanes_to_highway(highway_gdf: pd.DataFrame, sumo_net) -> pd.DataFrame: Inserts lanes to a highway GeoDataFrame by replacing 0 values with a random value based on the probability distribution of the number of lanes.
         calculate_width_of_highway(highway_gdf: GeoDataFrame) -> GeoDataFrame: Calculates the width of a highway based on the number of lanes.
+        process_highway_data(is_online=False, sumo_net=None, osm_file=None): Processes highway data by retrieving the highway data, inserting lanes to the highway, calculating the width of the highway, and adding an 'emission_src_group' column.
+        add_edge_length_to_df(sumo_emissions_df, sumo_net): Adds a 'length' column to the input DataFrame containing the length of each edge.
     """
 
     def __init__(self, location):
@@ -205,6 +207,16 @@ class HighwayDataProcessor:
         highway_gdf = self.add_emission_src_group(highway_gdf)
         return highway_gdf
 
+    def add_edge_length_to_df(self, sumo_emissions_df, sumo_net):
+        # Add length column
+        sumo_emissions_df['length'] = 0
+        for index, row in sumo_emissions_df.iterrows():
+            edge_id = row['edge_id']
+            edge = sumo_net.getEdge(edge_id)
+            length = edge.getLength()
+            sumo_emissions_df.loc[index, 'length'] = length
+        return sumo_emissions_df
+
     def process_sumo_edges_emissions_file(self, is_online, filename, sumo_net, highway_gdf):
         """
         Reads a SUMO emissions file and returns a pandas DataFrame with the aggregated emissions per OSM ID.
@@ -216,8 +228,8 @@ class HighwayDataProcessor:
             highway_gdf (GeoDataFrame): A GeoDataFrame containing the highway data.
 
         Returns:
-            pandas.DataFrame: A DataFrame with the aggregated emissions per OSM ID, with columns 'osmid', 'NOx_normed',
-            and 'PMx_normed'.
+            pandas.DataFrame: A DataFrame with the aggregated emissions per OSM ID, with columns 'osmid', 'NOx_abs' 'CO_abs,
+            and 'PMx_abs'.
         """
         print("Reading sumo emissions file...")
         if is_online:
@@ -233,12 +245,14 @@ class HighwayDataProcessor:
             # Rename the id column to edge_id
             sumo_emissions_df.rename(columns={"id": "edge_id"}, inplace=True)
 
+            sumo_emissions_df = self.add_edge_length_to_df(sumo_emissions_df, sumo_net)
+
             osm_id_list = highway_gdf['osmid'].tolist()
             # Convert edges to osm id
             sumo_emissions_df = self.convert_sumo_edges_to_osm_id(
                 sumo_emissions_df, sumo_net, osm_id_list)
             sumo_emissions_df = sumo_emissions_df.groupby('osmid').agg(
-                {'NOx_normed': 'sum', 'PMx_normed': 'sum'})
+                {'NOx_abs': 'sum', 'PMx_abs': 'sum', 'CO_abs': 'sum','length': 'first'})
             sumo_emissions_df.reset_index(inplace=True)
         else:
             # Read the xml without the interval row
@@ -252,6 +266,8 @@ class HighwayDataProcessor:
             
             # Rename the id column to edge_id
             sumo_emissions_df.rename(columns={"id": "edge_id"}, inplace=True)
+
+            sumo_emissions_df = self.add_edge_length_to_df(sumo_emissions_df, sumo_net)
 
         return sumo_emissions_df
 
@@ -316,7 +332,7 @@ class HighwayDataProcessor:
                 sumo_emissions_df, highway_gdf, on="osmid", how="outer")
             # Join rows with the same osmid
             sumo_emissions_highway_df = sumo_emissions_highway_df.groupby("osmid").agg(
-                {"NOx_normed": "sum", "PMx_normed": "sum", "highway": "first", "geometry": "first", "lanes": "first", "width": "first", "emission_src_group": "first"})
+                {"NOx_abs": "sum", "PMx_abs": "sum", "highway": "first", "geometry": "first", "lanes": "first", "length": "first", "width": "first", "emission_src_group": "first"})
             # Clean the sumo emissions and highway data
             sumo_emissions_highway_df = self.clean_sumo_emisisons_highway_data(
                 sumo_emissions_highway_df)
@@ -329,8 +345,8 @@ class HighwayDataProcessor:
             sumo_emissions_highway_df = pd.merge(
                 sumo_emissions_df, highway_gdf, on="edge_id")
             # Clean df only with the columns we need
-            columns_we_need = ["edge_id", "NOx_normed", "PMx_normed",
-                               "geometry", "lanes", "width", "emission_src_group"]
+            columns_we_need = ["edge_id", "NOx_abs", "PMx_abs", "CO_abs",
+                               "geometry", "lanes", "length", "width", "emission_src_group"]
             sumo_emissions_highway_df = sumo_emissions_highway_df[columns_we_need]
             # Convert DataFrame to GeoDataFrame
             sumo_emissions_highway_gdf = GeoDataFrame(
