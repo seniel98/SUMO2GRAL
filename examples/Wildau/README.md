@@ -8,8 +8,9 @@ This tutorial guides you through utilizing the SUMO2GRAL tool for pollutant disp
 
 Before beginning, ensure you have:
 
-- Executed the Wildau SUMO simulation to produce the [edge emissions file](https://sumo.dlr.de/docs/Simulation/Output/Lane-_or_Edge-based_Emissions_Measures.html).
-- An OSM file for Wildau, obtainable from [OpenStreetMap](https://www.openstreetmap.org/).
+- Completed the [setup](../../README.md#setup) including the installation of all dependencies.
+- Executed the Wildau SUMO simulation to produce the [edge emissions file](https://sumo.dlr.de/docs/Simulation/Output/Lane-_or_Edge-based_Emissions_Measures.html) by running for instance `sumo -c emissions.sumocfg` in the Wildau directory obtained above.
+- An OSM file for Wildau, obtainable from the [SAGA repository](https://github.com/lcodeca/SUMOActivityGen/raw/master/tests/wildau_osm.xml.gz) or directly from [OpenStreetMap](https://www.openstreetmap.org/).
 - The GRAL software, downloadable from [GRAL's website](https://gral.tugraz.at/) or the [GRAL GitHub repository](https://github.com/GralDispersionModel/GRAL).
 - Meteorological data compatible with GRAL. Use the provided [weather.met example](/weather/examples/weather.met) or convert a .csv file like [this example](/weather/examples/standard_input_weather_data.csv) into a .met file using the SUMO2GRAL tool. For detailed usage instructions, visit the [weather processor documentation](https://seniel98.github.io/SUMO2GRAL/weather/weather_processor/#usage).
 - A designated base directory for storing simulation files and outputs.
