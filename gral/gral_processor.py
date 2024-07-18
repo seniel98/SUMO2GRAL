@@ -65,8 +65,8 @@ class GRAL:
         """
         greb_file_path = f'{self.base_directory}/GRAL.geb'
 
-        x_cell_size = 10
-        y_cell_size = 10
+        x_cell_size = 5
+        y_cell_size = 5
 
         east_point = int(bbox['east'])
         west_point = int(bbox['west'])
@@ -82,7 +82,7 @@ class GRAL:
             file.write(
                 f"{y_cell_size}              !cell-size for cartesian wind field in GRAL in y-direction\n")
             file.write(
-                "2,1.01              !cell-size for cartesian wind field in GRAL in z-direction, streching factor for increasing cells heights with height\n")
+                "2,1.05              !cell-size for cartesian wind field in GRAL in z-direction, streching factor for increasing cells heights with height\n")
             file.write(
                 f"{number_of_cells_x}              !number of cells for counting grid in GRAL in x-direction\n")
             file.write(
@@ -127,23 +127,23 @@ class GRAL:
             file.write(
                 "4 \t ! Meteorology input: inputzr.dat = 0, meteo.all = 1, elimaeki.prn = 2, SONIC.dat = 3, meteopgt.all = 4\n")
             file.write("0\t ! Receptor points: Yes = 1, No = 0\n")
-            file.write("0.25 \t ! Surface roughness in [m]\n")
+            file.write("0.75 \t ! Surface roughness in [m]\n")
             file.write(f"{round(float(latitude),2)} \t ! Latitude\n")
             file.write("N \t ! Meandering Effect Off = J, On = N\n")
             file.write(
                 "NOx \t ! Pollutant: not used since version 19.01, new: Pollutant.txt\n")
             file.write(
                 f"{','.join([str(slice) for slice in horizontal_slices])}, \t ! Horizontal slices [m] seperated by a comma (number of slices need to be defined in GRAL.geb!)\n")
-            file.write("1 \t ! Vertical grid spacing in [m]\n")
+            file.write("0.7 \t ! Vertical grid spacing in [m]\n")
             file.write(
                 "1 \t ! Start the calculation with this weather number\n")
             file.write("2,15 \t ! How to take buildings into account? 1 = simple mass conservation, 2 = mass conservation with Poisson equation + advection, Factor for the prognostic sub domain size\n")
             file.write(
                 "0 \t ! Stream output for Soundplan 1 = activated, -2 = write buildings height\n")
             file.write(
-                "compressed V02 \t ! Write compressed output files\n")
+                "compressed V03 \t ! Write compressed output files\n")
             file.write(
-                "WaitForKeyStroke \t ! Wait for keystroke when exiting GRAL\n")
+                "nokeystroke \t ! Wait for keystroke when exiting GRAL\n")
             file.write(
                 "ASCiiResults 1 \t ! Additional ASCii result files Yes = 1, No = 0\n")
             file.write(
