@@ -82,7 +82,7 @@ class GRAL:
             file.write(
                 f"{y_cell_size}              !cell-size for cartesian wind field in GRAL in y-direction\n")
             file.write(
-                "2,1.05              !cell-size for cartesian wind field in GRAL in z-direction, streching factor for increasing cells heights with height\n")
+                "1.0,1.05              !cell-size for cartesian wind field in GRAL in z-direction, streching factor for increasing cells heights with height\n")
             file.write(
                 f"{number_of_cells_x}              !number of cells for counting grid in GRAL in x-direction\n")
             file.write(
@@ -127,14 +127,14 @@ class GRAL:
             file.write(
                 "4 \t ! Meteorology input: inputzr.dat = 0, meteo.all = 1, elimaeki.prn = 2, SONIC.dat = 3, meteopgt.all = 4\n")
             file.write("0\t ! Receptor points: Yes = 1, No = 0\n")
-            file.write("0.75 \t ! Surface roughness in [m]\n")
+            file.write("0.5 \t ! Surface roughness in [m]\n")
             file.write(f"{round(float(latitude),2)} \t ! Latitude\n")
             file.write("N \t ! Meandering Effect Off = J, On = N\n")
             file.write(
                 "NOx \t ! Pollutant: not used since version 19.01, new: Pollutant.txt\n")
             file.write(
                 f"{','.join([str(slice) for slice in horizontal_slices])}, \t ! Horizontal slices [m] seperated by a comma (number of slices need to be defined in GRAL.geb!)\n")
-            file.write("0.7 \t ! Vertical grid spacing in [m]\n")
+            file.write("1 \t ! Vertical grid spacing in [m]\n")
             file.write(
                 "1 \t ! Start the calculation with this weather number\n")
             file.write("2,15 \t ! How to take buildings into account? 1 = simple mass conservation, 2 = mass conservation with Poisson equation + advection, Factor for the prognostic sub domain size\n")
@@ -147,9 +147,9 @@ class GRAL:
             file.write(
                 "ASCiiResults 1 \t ! Additional ASCii result files Yes = 1, No = 0\n")
             file.write(
-                "0\t ! Adaptive surface roughness - max value [m]. Default: 0 = no adaptive surface roughness\n")
+                "1.0\t ! Adaptive surface roughness - max value [m]. Default: 0 = no adaptive surface roughness\n")
             file.write(
-                "0\t ! Radius surrounding sources, in which the wind field is to be calculated prognostically; 0 = off, valid values: 50 - 10000 m\n")
+                "100\t ! Radius surrounding sources, in which the wind field is to be calculated prognostically; 0 = off, valid values: 50 - 10000 m\n")
             file.write("1 \t ! Use GRAL Online Functions = true\n")
 
         print(f'in.dat file created at: {in_dat_file_path}')
@@ -286,6 +286,8 @@ class GRAL:
         buildings_file_path = f'{self.base_directory}/buildings.dat'
         with open(buildings_file_path, 'w') as file:
             for index, row in buildings_gdf.iterrows():
+                # Treat the height as an relative value inside GRAL.
+                height = int(row['height'])
                 file.write(
                     f"{int(row['geometry'].centroid.x)},{int(row['geometry'].centroid.y)},0,{int(row['height'])}\n")
 
@@ -342,8 +344,8 @@ class GRAL:
         share_of_pm_10 = 0
         share_of_pm_2_5 = 0
         # Height of the city in meters above sea level
-        city_mean_height = -3
-        mean_pollutant_error = 19.73
+        city_mean_height = 0
+        mean_pollutant_error = 1
         if pollutant == "PM10":
             pollutant = "PMx"
             mode = 2
@@ -351,10 +353,14 @@ class GRAL:
             dry_deposition_pm_2_5 = 0.0032
             share_of_pm_10 = 100
             share_of_pm_2_5 = 60
-            mean_pollutant_error = 23.37
+            mean_pollutant_error = 1
         if not is_online:
             id = "edge_id"
         line_gdf = gpd.read_file(f'{self.base_directory}/{self.line_file}')
+        # Remove NaN values
+        line_gdf = line_gdf.dropna(subset=[f"{pollutant}_abs"])
+        # Remove values less or equal to 0
+        line_gdf = line_gdf[line_gdf[f"{pollutant}_abs"] >= 0]
         line_file_path = f'{self.base_directory}/line.dat'
         with open(line_file_path, 'w') as file:
             file.write("Generated: \n")
@@ -533,12 +539,12 @@ class GRAL:
         Returns:
             float: The emission rate.
         """
-        mg = mg + mg * (error_pollutant/100)
+        # mg = mg + mg * (error_pollutant/100)
         # Convert mg to kg
         kg = mg / 1000000
         # Convert the edge length from meters to kilometers
         km = edge_length / 1000
         # Conert the simulation time from seconds to hours
         sim_time = sim_time / 3600
-        # Calculate the emission rate in kg/h/km
-        return kg*km / sim_time
+        # Calculate the emission rate in kg/(h*km)
+        return kg / (sim_time * km)

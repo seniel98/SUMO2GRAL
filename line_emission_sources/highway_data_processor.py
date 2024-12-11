@@ -253,6 +253,11 @@ class HighwayDataProcessor:
                 sumo_emissions_df, sumo_net, osm_id_list)
             sumo_emissions_df = sumo_emissions_df.groupby('osmid').agg(
                 {'NOx_abs': 'sum', 'PMx_abs': 'sum', 'CO_abs': 'sum','length': 'first'})
+            
+            # Drop the rows with nan values on the osmid column
+            sumo_emissions_df = sumo_emissions_df[sumo_emissions_df.index.notna()]
+            # Drop if any of the emissions is less or equal to 0
+            sumo_emissions_df = sumo_emissions_df[(sumo_emissions_df['NOx_abs'] > 0) & (sumo_emissions_df['PMx_abs'] > 0) & (sumo_emissions_df['CO_abs'] > 0)]
             sumo_emissions_df.reset_index(inplace=True)
         else:
             # Read the xml without the interval row
