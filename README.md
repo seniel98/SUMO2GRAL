@@ -13,6 +13,7 @@ S2G is a project aimed at simplifying the workflow of estimating pollutant conce
 - [Tutorials](#tutorials)
   - [Use Case: Wildau](#use-case-wildau)
 - [Contributing](#contributing)
+- [Citation](#citation)
 - [License](#license)
 
 ## Features
@@ -110,6 +111,24 @@ For more detailed examples and use cases, please check our [documentation](https
 ## Contributing
 
 Your contributions are welcome! Please refer to the [contributing guidelines](CONTRIBUTING.md) for more information.
+
+## Citation
+
+Please cite [this article](http://dx.doi.org/10.1109/DS-RT62209.2024.00016) if you use this tool during your research.
+
+Bibtex reference:
+```tex
+@INPROCEEDINGS{10937689,
+  author={Padrón, José D. and Behrisch, Michael and Calafate, Carlos T.},
+  booktitle={2024 28th International Symposium on Distributed Simulation and Real Time Applications (DS-RT)}, 
+  title={SUMO2GRAL: A tool to simplify the workflow of estimating pollutant concentrations in urban areas}, 
+  year={2024},
+  volume={},
+  number={},
+  pages={42-47},
+  keywords={Atmospheric modeling;Urban areas;Focusing;Air pollution;Real-time systems;Reliability;Dispersion;Air pollution;SUMO;GRAL;vehicle emissions;traffic pollution},
+  doi={10.1109/DS-RT62209.2024.00016}}
+```
 
 ## License
 
